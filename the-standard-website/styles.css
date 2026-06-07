@@ -639,18 +639,20 @@ h1, h2, h3, h4, h5 { margin: 0; font-weight: 700; letter-spacing: -0.01em; }
 .hero-excerpt.light { color: rgba(255,255,255,0.9); }
 .meta-line {
   display: flex; align-items: center; gap: 8px;
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: 12px;
+  font-weight: 400;
   color: var(--ink-3);
-  letter-spacing: 0.04em;
+  letter-spacing: 0.01em;
 }
 .meta-line.light { color: rgba(255,255,255,0.8); }
 .dot { color: var(--ink-4); }
 .meta-sub {
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: 11px;
+  font-weight: 400;
   color: var(--ink-4);
-  letter-spacing: 0.06em;
+  letter-spacing: 0.01em;
 }
 
 .hero-side {
@@ -882,8 +884,9 @@ h1, h2, h3, h4, h5 { margin: 0; font-weight: 700; letter-spacing: -0.01em; }
 }
 .art-card:hover .art-card-img { opacity: 0.85; }
 .art-card-title {
+  font-family: var(--serif);
   font-size: 17px;
-  line-height: 1.3;
+  line-height: 1.35;
   font-weight: 700;
   color: var(--ink);
   letter-spacing: -0.01em;
@@ -893,18 +896,21 @@ h1, h2, h3, h4, h5 { margin: 0; font-weight: 700; letter-spacing: -0.01em; }
 }
 .art-card:hover .art-card-title { color: var(--brand-ink); }
 .art-card-excerpt {
+  font-family: var(--sans);
   font-size: 14px;
+  font-weight: 400;
   color: var(--ink-3);
-  line-height: 1.5;
+  line-height: 1.65;
   margin: 0 0 10px;
   display: none;
 }
 .art-card-meta {
   display: flex; gap: 6px;
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: 11px;
+  font-weight: 400;
   color: var(--ink-4);
-  letter-spacing: 0.04em;
+  letter-spacing: 0.01em;
 }
 
 /* ============ POPULAR ============ */
