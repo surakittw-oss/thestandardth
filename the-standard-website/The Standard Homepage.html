@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>THE STANDARD — Homepage Redesign</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&family=Noto+Serif+Thai:wght@400;500;600;700;900&family=IBM+Plex+Serif:ital,wght@0,400;0,600;0,700;1,700;1,900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css?v=23" />
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script src="data.js?v=13"></script>
+<script type="text/babel" src="components.jsx?v=15"></script>
+
+<script type="text/babel">
+const TWEAKS_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "variant": "minimal",
+  "dark": false
+}/*EDITMODE-END*/;
+
+function App() {
+  const [variant, setVariant] = React.useState(TWEAKS_DEFAULTS.variant);
+  const [dark, setDark] = React.useState(TWEAKS_DEFAULTS.dark);
+  const [activeCat, setActiveCat] = React.useState('ALL');
+  const [editMode, setEditMode] = React.useState(false);
+
+  React.useEffect(() => {
+    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+  }, [dark]);
+
+  // honor TWEAKS_DEFAULTS over stale localStorage by versioning
+  React.useEffect(() => {
+    const saved = localStorage.getItem('ts-prefs-v2');
+    if (saved) {
+      try {
+        const p = JSON.parse(saved);
+        if (p.variant) setVariant(p.variant);
+        if (typeof p.dark === 'boolean') setDark(p.dark);
+      } catch {}
+    }
+  }, []);
+  React.useEffect(() => {
+    localStorage.setItem('ts-prefs-v2', JSON.stringify({ variant, dark }));
+  }, [variant, dark]);
+
+  // tweak bridge
+  React.useEffect(() => {
+    const onMsg = (e) => {
+      if (!e.data) return;
+      if (e.data.type === '__activate_edit_mode') setEditMode(true);
+      if (e.data.type === '__deactivate_edit_mode') setEditMode(false);
+    };
+    window.addEventListener('message', onMsg);
+    window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+    return () => window.removeEventListener('message', onMsg);
+  }, []);
+
+  const updateTweak = (key, val) => {
+    if (key === 'variant') setVariant(val);
+    if (key === 'dark') setDark(val);
+    try {
+      window.parent.postMessage({ type: '__edit_mode_set_keys', edits: { [key]: val } }, '*');
+    } catch {}
+  };
+
+  const filteredArticles = React.useMemo(() => {
+    if (activeCat === 'ALL') return window.ARTICLES;
+    return window.ARTICLES.filter(a => a.category === activeCat);
+  }, [activeCat]);
+
+  // hero uses top 4 articles from (filtered or all)
+  const heroPool = filteredArticles.length >= 4 ? filteredArticles : window.ARTICLES;
+
+  return (
+    <div data-screen-label="Homepage">
+      <Header
+        dark={dark}
+        setDark={setDark}
+        activeCat={activeCat}
+        setActiveCat={setActiveCat}
+        variant={variant}
+      />
+      <main>
+        <Hero articles={heroPool} variant={variant} />
+        <PopularSection />
+        <LatestGrid articles={filteredArticles} activeCat={activeCat} variant={variant} />
+        <EventsSection />
+      </main>
+      <Footer />
+
+      {editMode && (
+        <div className="tweaks-panel">
+          <h5>Tweaks</h5>
+          <div className="tweaks-row">
+            <label className="tweaks-label">Layout</label>
+            <div className="tweaks-options">
+              {['editorial', 'magazine', 'minimal', 'bento'].map(v => (
+                <button
+                  key={v}
+                  className={`tweaks-opt ${variant === v ? 'is-active' : ''}`}
+                  onClick={() => updateTweak('variant', v)}
+                >
+                  {v}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="tweaks-row">
+            <label className="tweaks-label">Theme</label>
+            <div className="tweaks-options">
+              <button className={`tweaks-opt ${!dark ? 'is-active' : ''}`} onClick={() => updateTweak('dark', false)}>Light</button>
+              <button className={`tweaks-opt ${dark ? 'is-active' : ''}`} onClick={() => updateTweak('dark', true)}>Dark</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
