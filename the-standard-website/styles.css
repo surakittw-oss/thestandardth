@@ -621,9 +621,9 @@ h1, h2, h3, h4, h5 { margin: 0; font-weight: 700; letter-spacing: -0.01em; }
 }
 .hero-main-body { max-width: 780px; }
 .hero-title-xl {
-  font-family: var(--serif);
+  font-family: var(--sans);
   font-size: clamp(32px, 4.2vw, 54px);
-  line-height: 1.1;
+  line-height: 1.15;
   letter-spacing: -0.02em;
   margin: 8px 0 14px;
   color: var(--ink);
@@ -672,7 +672,7 @@ h1, h2, h3, h4, h5 { margin: 0; font-weight: 700; letter-spacing: -0.01em; }
   margin-bottom: 14px;
 }
 .hero-side-body h3 {
-  font-family: var(--serif);
+  font-family: var(--sans);
   font-size: 20px;
   line-height: 1.25;
   color: var(--ink);
@@ -734,7 +734,7 @@ h1, h2, h3, h4, h5 { margin: 0; font-weight: 700; letter-spacing: -0.01em; }
   padding-bottom: 64px;
 }
 .hero-title-minimal {
-  font-family: var(--serif);
+  font-family: var(--sans);
   font-size: clamp(30px, 3.6vw, 52px);
   line-height: 1.08;
   letter-spacing: -0.025em;
@@ -777,7 +777,7 @@ h1, h2, h3, h4, h5 { margin: 0; font-weight: 700; letter-spacing: -0.01em; }
 .hero-minimal-card:hover .hero-minimal-card-img { opacity: 0.9; }
 .hero-minimal-card-body { min-width: 0; }
 .hero-minimal-card h4 {
-  font-family: var(--serif);
+  font-family: var(--sans);
   font-size: 19px;
   line-height: 1.28;
   margin: 8px 0 8px;
@@ -850,7 +850,7 @@ h1, h2, h3, h4, h5 { margin: 0; font-weight: 700; letter-spacing: -0.01em; }
 .grid-editorial .art-card.is-featured .art-card-img { aspect-ratio: var(--cover); }
 .grid-editorial .art-card.is-featured .art-card-title {
   font-size: 26px;
-  font-family: var(--serif);
+  font-family: var(--sans);
 }
 .grid-editorial .art-card.is-wide {
   grid-column: span 2;
@@ -870,7 +870,7 @@ h1, h2, h3, h4, h5 { margin: 0; font-weight: 700; letter-spacing: -0.01em; }
   gap: 40px 56px;
 }
 .grid-minimal .art-card-img { aspect-ratio: var(--cover); }
-.grid-minimal .art-card-title { font-size: 22px; font-family: var(--serif); }
+.grid-minimal .art-card-title { font-size: 22px; font-family: var(--sans); }
 .grid-minimal .art-card-excerpt { display: block !important; }
 
 /* ============ CARD ============ */
@@ -884,7 +884,7 @@ h1, h2, h3, h4, h5 { margin: 0; font-weight: 700; letter-spacing: -0.01em; }
 }
 .art-card:hover .art-card-img { opacity: 0.85; }
 .art-card-title {
-  font-family: var(--serif);
+  font-family: var(--sans);
   font-size: 17px;
   line-height: 1.35;
   font-weight: 700;
@@ -1493,7 +1493,7 @@ h1, h2, h3, h4, h5 { margin: 0; font-weight: 700; letter-spacing: -0.01em; }
 }
 .bento-hero-overlay .cat-tag.light { color: var(--brand); border-top-color: var(--brand); }
 .bento-hero-title {
-  font-family: var(--serif);
+  font-family: var(--sans);
   font-size: clamp(24px, 2.6vw, 34px);
   line-height: 1.15;
   letter-spacing: -0.02em;
@@ -1598,7 +1598,7 @@ h1, h2, h3, h4, h5 { margin: 0; font-weight: 700; letter-spacing: -0.01em; }
 .grid-bento .bento-card:nth-child(7n+1) .bento-card-img { aspect-ratio: var(--cover); }
 .grid-bento .bento-card:nth-child(7n+1) .bento-card-title {
   font-size: 22px;
-  font-family: var(--serif);
+  font-family: var(--sans);
   line-height: 1.2;
 }
 
