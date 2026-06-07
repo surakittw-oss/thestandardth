@@ -118,6 +118,34 @@
 [data-theme="dark"] .primary-nav.is-open { background: #0d0d0d; border-top-color: #1e1e1e; }
 [data-theme="dark"] .mega-mobile-link { border-color: #2a2a2a; }
 
+/* ============ MAGAZINE SCROLL REVEAL ============ */
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.7s cubic-bezier(.16,1,.3,1), transform 0.7s cubic-bezier(.16,1,.3,1);
+  will-change: transform, opacity;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+  will-change: auto;
+}
+/* Staggered children */
+.reveal-children > * {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s cubic-bezier(.16,1,.3,1), transform 0.6s cubic-bezier(.16,1,.3,1);
+  will-change: transform, opacity;
+}
+.reveal-children.is-visible > *:nth-child(1) { opacity: 1; transform: none; transition-delay: 0s; }
+.reveal-children.is-visible > *:nth-child(2) { opacity: 1; transform: none; transition-delay: 0.08s; }
+.reveal-children.is-visible > *:nth-child(3) { opacity: 1; transform: none; transition-delay: 0.16s; }
+.reveal-children.is-visible > *:nth-child(4) { opacity: 1; transform: none; transition-delay: 0.24s; }
+.reveal-children.is-visible > *:nth-child(n+5) { opacity: 1; transform: none; transition-delay: 0.32s; }
+@media (prefers-reduced-motion: reduce) {
+  .reveal, .reveal-children > * { opacity: 1; transform: none; transition: none; }
+}
+
 /* ============ BASE ============ */
 * { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
@@ -188,7 +216,7 @@ h1, h2, h3, h4, h5 { margin: 0; font-weight: 700; letter-spacing: -0.01em; }
   line-height: 0;
 }
 .wordmark-img {
-  height: 52px;
+  height: 68px;
   width: auto;
   display: block;
   object-fit: contain;
@@ -1295,8 +1323,9 @@ h1, h2, h3, h4, h5 { margin: 0; font-weight: 700; letter-spacing: -0.01em; }
 .site-footer {
   margin-top: 48px;
   border-top: 4px solid var(--ink);
-  background: var(--bg-tint);
+  background: #efefef;
 }
+[data-theme="dark"] .site-footer { background: #090909; }
 .footer-inner {
   max-width: var(--maxw);
   margin: 0 auto;
