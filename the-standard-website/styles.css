@@ -261,25 +261,22 @@ h1, h2, h3, h4, h5 { margin: 0; font-weight: 700; letter-spacing: -0.01em; }
 }
 .nav-cat {
   padding: 18px 12px;
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: 13px;
   letter-spacing: 0.18em;
   font-weight: 700;
   color: var(--ink);
   position: relative;
   white-space: nowrap;
-  transition: color 0.15s;
+  transition: color 0.15s, border-bottom-color 0.15s;
   display: flex; align-items: center; gap: 5px;
   text-transform: uppercase;
-  border-bottom: 3px solid transparent;
-  margin-bottom: -1px; /* sit on top of nav border */
+  border-bottom: 4px solid transparent;
+  margin-bottom: -1px;
 }
-.nav-cat:hover { color: var(--brand); }
-.nav-cat.is-active {
-  color: var(--ink);
-  border-bottom-color: var(--brand);
-}
-.nav-cat.is-hovered { color: var(--brand); }
+.nav-cat:hover,
+.nav-cat.is-hovered { color: var(--brand); border-bottom-color: var(--brand); }
+.nav-cat.is-active { color: var(--ink); }
 .nav-cat-caret {
   font-size: 9px;
   opacity: 0.5;
