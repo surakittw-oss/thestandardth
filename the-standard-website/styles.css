@@ -411,23 +411,25 @@ h1, h2, h3, h4, h5 { margin: 0; font-weight: 700; letter-spacing: -0.01em; }
 .mega-news-topic:hover .mega-news-bullet { opacity: 1; }
 .mega-visual-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
 }
 .mega-visual-card {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 16px 14px;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
   border: 1px solid var(--rule);
-  border-radius: 10px;
-  background: var(--bg-tint);
-  transition: border-color 0.15s, background 0.15s, transform 0.15s;
+  border-radius: 8px;
+  background: transparent;
+  text-decoration: none;
+  transition: border-color 0.15s, background 0.15s;
+  min-width: 0;
 }
 .mega-visual-card:hover {
   border-color: var(--mega-accent, var(--brand));
-  background: var(--bg);
-  transform: translateY(-2px);
+  background: color-mix(in srgb, var(--mega-accent, var(--brand)) 6%, transparent);
 }
 .mega-visual-idx {
   font-family: var(--mono);
@@ -436,25 +438,34 @@ h1, h2, h3, h4, h5 { margin: 0; font-weight: 700; letter-spacing: -0.01em; }
   letter-spacing: 0.1em;
   color: var(--mega-accent, var(--brand));
   opacity: 0.7;
+  flex-shrink: 0;
 }
 .mega-visual-icon {
   display: flex;
   align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: 7px;
+  background: color-mix(in srgb, var(--mega-accent, var(--brand)) 10%, transparent);
   color: var(--mega-accent, var(--brand));
-  opacity: 0.72;
-  transition: opacity 0.15s, transform 0.2s cubic-bezier(.2,.8,.2,1);
+  transition: background 0.15s, transform 0.18s cubic-bezier(.2,.8,.2,1);
 }
 .mega-visual-card:hover .mega-visual-icon {
-  opacity: 1;
-  transform: scale(1.15);
+  background: color-mix(in srgb, var(--mega-accent, var(--brand)) 18%, transparent);
+  transform: scale(1.08);
 }
 .mega-visual-name {
   font-family: var(--sans);
-  font-size: 15px;
-  font-weight: 700;
+  font-size: 13.5px;
+  font-weight: 600;
   color: var(--ink);
   letter-spacing: -0.01em;
-  line-height: 1.2;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   transition: color 0.15s;
 }
 .mega-visual-card:hover .mega-visual-name { color: var(--mega-accent, var(--brand)); }
