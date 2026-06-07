@@ -73,6 +73,97 @@ const Icons = {
 
 const { useState, useEffect, useRef, useMemo } = React;
 
+// ============ MEGA MENU TOPIC ICONS ============
+const MEGA_ICONS = {
+  // POP
+  "Entertainment": (
+    <svg width="22" height="22" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="10,1.5 12.4,7.4 18.9,7.4 13.6,11.3 15.6,17.5 10,13.8 4.4,17.5 6.4,11.3 1.1,7.4 7.6,7.4"/>
+    </svg>
+  ),
+  "Film": (
+    <svg width="22" height="22" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="7" width="16" height="11" rx="1.5"/>
+      <line x1="2" y1="11" x2="18" y2="11"/>
+      <path d="M5.5 7L3.5 3h4l2 4"/>
+      <path d="M10.5 7L8.5 3h4l2 4"/>
+    </svg>
+  ),
+  "Music": (
+    <svg width="22" height="22" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <ellipse cx="7.5" cy="15.5" rx="2.5" ry="2" transform="rotate(-10 7.5 15.5)"/>
+      <line x1="10" y1="14.8" x2="10" y2="3"/>
+      <path d="M10 3L17 1.5V6.5L10 8"/>
+    </svg>
+  ),
+  "Fashion": (
+    <svg width="22" height="22" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="10" cy="3" r="1.5"/>
+      <path d="M10 4.5V8"/>
+      <path d="M10 8L3 13h14L10 8z"/>
+      <line x1="3" y1="13" x2="17" y2="13"/>
+    </svg>
+  ),
+  "K-POP": (
+    <svg width="22" height="22" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 15V8l4 4 3-6 3 6 4-4v7H3z"/>
+      <line x1="3" y1="17" x2="17" y2="17"/>
+    </svg>
+  ),
+  "Art & Design": (
+    <svg width="22" height="22" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M16.5 2L18 3.5 8 13.5l-4 1 1-4L16.5 2z"/>
+      <line x1="14" y1="4.5" x2="15.5" y2="6"/>
+      <path d="M3 17c0-1.5 1-2.5 2.5-2.5S8 15.5 8 17c0-1.5 1-2 2.5-2"/>
+    </svg>
+  ),
+  // LIFE
+  "Food & Drink": (
+    <svg width="22" height="22" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="7" y1="2" x2="7" y2="18"/>
+      <line x1="5" y1="2" x2="5" y2="8"/>
+      <line x1="9" y1="2" x2="9" y2="8"/>
+      <path d="M5 8Q7 10.5 9 8"/>
+      <path d="M14 2L16 8Q16 11 14 11V18"/>
+    </svg>
+  ),
+  "Place": (
+    <svg width="22" height="22" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M10 2a6 6 0 0 1 6 6c0 4.5-6 11-6 11S4 12.5 4 8a6 6 0 0 1 6-6z"/>
+      <circle cx="10" cy="8" r="2.2"/>
+    </svg>
+  ),
+  "Active Leisure": (
+    <svg width="22" height="22" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="5" cy="14" r="3.2"/>
+      <circle cx="15" cy="14" r="3.2"/>
+      <path d="M5 14L10 7l5 7"/>
+      <path d="M10 7l3.5-2.5L17 7"/>
+      <path d="M10 7L8 9.5"/>
+    </svg>
+  ),
+  "Body & Mind": (
+    <svg width="22" height="22" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M10 16.5C5.5 13.5 3 10.8 3 8.2a4.2 4.2 0 0 1 7-3.1 4.2 4.2 0 0 1 7 3.1c0 2.6-2.5 5.3-7 8.3z"/>
+    </svg>
+  ),
+  "Living": (
+    <svg width="22" height="22" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M2 9.5L10 3l8 6.5"/>
+      <path d="M4 8.2V18h12V8.2"/>
+      <rect x="8" y="13" width="4" height="5"/>
+    </svg>
+  ),
+  "Tech & Gadget": (
+    <svg width="22" height="22" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="6" y="2" width="8" height="16" rx="2"/>
+      <line x1="6" y1="5" x2="14" y2="5"/>
+      <line x1="6" y1="15" x2="14" y2="15"/>
+      <circle cx="10" cy="17" r="0.9" fill="currentColor" stroke="none"/>
+    </svg>
+  ),
+};
+
 // ============ HEADER ============
 function Header({ dark, setDark, activeCat, setActiveCat, variant }) {
   const [scrolled, setScrolled] = useState(false);
@@ -232,7 +323,9 @@ function MegaPanel({ cat, onEnter, onLeave, onPick }) {
             <div className="mega-visual-grid">
               {meta.topics.map((t, i) => (
                 <a href="#" key={t} className="mega-visual-card" onClick={() => onPick(t)}>
-                  <span className="mega-visual-idx">{String(i+1).padStart(2,'0')}</span>
+                  <span className="mega-visual-icon">
+                    {MEGA_ICONS[t] || <span className="mega-visual-idx">{String(i+1).padStart(2,'0')}</span>}
+                  </span>
                   <span className="mega-visual-name">{t}</span>
                 </a>
               ))}
