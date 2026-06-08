@@ -117,6 +117,86 @@ const MEGA_ICONS = {
       <path d="M3 17c0-1.5 1-2.5 2.5-2.5S8 15.5 8 17c0-1.5 1-2 2.5-2"/>
     </svg>
   ),
+  // WEALTH
+  "ECONOMIC": (
+    <svg width="22" height="22" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="2,15 6,10 10,12.5 14,6.5 18,3"/>
+      <line x1="2" y1="18" x2="18" y2="18"/>
+      <line x1="2" y1="3" x2="2" y2="18"/>
+      <polyline points="12,3 18,3 18,9"/>
+    </svg>
+  ),
+  "MARKET": (
+    <svg width="22" height="22" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="5" y1="2.5" x2="5" y2="4.5"/>
+      <rect x="3.5" y="4.5" width="3" height="5" rx="0.5"/>
+      <line x1="5" y1="9.5" x2="5" y2="11.5"/>
+      <line x1="11" y1="6" x2="11" y2="8"/>
+      <rect x="9.5" y="8" width="3" height="4.5" rx="0.5"/>
+      <line x1="11" y1="12.5" x2="11" y2="14.5"/>
+      <line x1="17" y1="4" x2="17" y2="6"/>
+      <rect x="15.5" y="6" width="3" height="7" rx="0.5"/>
+      <line x1="17" y1="13" x2="17" y2="15"/>
+      <line x1="1" y1="18" x2="19" y2="18"/>
+    </svg>
+  ),
+  "BUSINESS": (
+    <svg width="22" height="22" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="7.5" width="16" height="10.5" rx="1.5"/>
+      <path d="M7 7.5V5.5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/>
+      <line x1="2" y1="12" x2="18" y2="12"/>
+      <line x1="10" y1="10" x2="10" y2="14"/>
+    </svg>
+  ),
+  "CRYPTOCURRENCY": (
+    <svg width="22" height="22" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="10" cy="10" r="8"/>
+      <path d="M7.5 7.5h4a1.5 1.5 0 0 1 0 3H7.5V7.5z"/>
+      <path d="M7.5 10.5h4.5a1.5 1.5 0 0 1 0 3H7.5v-3z"/>
+      <line x1="9.5" y1="6" x2="9.5" y2="7.5"/>
+      <line x1="11.5" y1="6" x2="11.5" y2="7.5"/>
+      <line x1="9.5" y1="13.5" x2="9.5" y2="15"/>
+      <line x1="11.5" y1="13.5" x2="11.5" y2="15"/>
+    </svg>
+  ),
+  "OPINION": (
+    <svg width="22" height="22" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 3h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6l-4 3.5V4a1 1 0 0 1 1-1z"/>
+      <line x1="7" y1="7.5" x2="13" y2="7.5"/>
+      <line x1="7" y1="10.5" x2="11" y2="10.5"/>
+    </svg>
+  ),
+  "PERSONAL FINANCE": (
+    <svg width="22" height="22" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="7" width="16" height="11" rx="1.5"/>
+      <path d="M6 7V5.5A1.5 1.5 0 0 1 7.5 4h5A1.5 1.5 0 0 1 14 5.5V7"/>
+      <line x1="2" y1="11" x2="18" y2="11"/>
+      <circle cx="14" cy="14.5" r="1.5"/>
+    </svg>
+  ),
+  "WEALTH MANAGEMENT": (
+    <svg width="22" height="22" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="10" cy="10" r="8"/>
+      <path d="M10 2v8l5.5 3.2"/>
+      <path d="M10 10L4.5 6.8"/>
+    </svg>
+  ),
+  "WORK & LEADERSHIP": (
+    <svg width="22" height="22" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="10" cy="5.5" r="2.5"/>
+      <path d="M5 18v-2a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v2"/>
+      <polyline points="7,13.5 10,10.5 13,13.5"/>
+      <line x1="10" y1="10.5" x2="10" y2="9"/>
+    </svg>
+  ),
+  "LIFESTYLE & PASSION": (
+    <svg width="22" height="22" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M10 16.5C5.5 13.5 2 10.5 2 7.3a4.2 4.2 0 0 1 8-1.8 4.2 4.2 0 0 1 8 1.8c0 3.2-3.5 6.2-8 9.2z"/>
+      <line x1="15" y1="3" x2="15" y2="1.5"/>
+      <line x1="17.2" y1="3.8" x2="18.3" y2="2.7"/>
+      <line x1="18" y1="6" x2="19.5" y2="6"/>
+    </svg>
+  ),
   // LIFE
   "Food & Drink": (
     <svg width="22" height="22" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
@@ -290,7 +370,7 @@ function MegaPanel({ cat, onEnter, onLeave, onPick }) {
   const meta = window.MEGA_MENU[cat] || { label: cat, color: '#E6332A', topics: [] };
   const accent = meta.color || '#E6332A';
   const isNews = cat === 'NEWS';
-  const isVisual = (cat === 'POP' || cat === 'LIFE'); // visual card layout
+  const isVisual = (cat === 'POP' || cat === 'LIFE' || cat === 'WEALTH'); // visual card layout
   const featured = React.useMemo(
     () => isNews
       ? window.ARTICLES.slice(0, 2)
@@ -319,8 +399,8 @@ function MegaPanel({ cat, onEnter, onLeave, onPick }) {
         {/* Topics column */}
         <div className={`mega-topics-col ${isNews ? 'is-wide' : ''}`}>
           {isVisual ? (
-            // POP / LIFE: visual card grid
-            <div className="mega-visual-grid">
+            // POP / LIFE / WEALTH: visual card grid
+            <div className={`mega-visual-grid${cat === 'WEALTH' ? ' mega-visual-grid--3col' : ''}`}>
               {meta.topics.map((t, i) => (
                 <a href="#" key={t} className="mega-visual-card" onClick={() => onPick(t)}>
                   <span className="mega-visual-icon">

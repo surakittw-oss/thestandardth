@@ -223,7 +223,7 @@ window.CATEGORIES = ["ALL", "POLITICS", "BUSINESS", "THAILAND", "WORLD", "TECH",
 window.NAV_ITEMS = [
   { label: "HOME",             cat: null,       mega: null },
   { label: "NEWS",             cat: null,       mega: "NEWS" },
-  { label: "WEALTH",           cat: "BUSINESS", mega: null },
+  { label: "WEALTH",           cat: "BUSINESS", mega: "WEALTH" },
   { label: "POP",              cat: null,       mega: "POP" },
   { label: "LIFE",             cat: null,       mega: "LIFE" },
   { label: "THE SECRET SAUCE", cat: null,       mega: null },
@@ -234,6 +234,10 @@ window.NAV_ITEMS = [
 ];
 
 window.MEGA_MENU = {
+  WEALTH: { label: "WEALTH", color: "#c19380", topics: [
+    "ECONOMIC", "MARKET", "BUSINESS", "CRYPTOCURRENCY", "OPINION",
+    "PERSONAL FINANCE", "WEALTH MANAGEMENT", "WORK & LEADERSHIP", "LIFESTYLE & PASSION"
+  ]},
   NEWS: { label: "NEWS", color: "#e62227", topics: [
     "Global Edition","Politics","Business","Thailand","World",
     "Mobility","Semiconductor","Energy Transition","Cost of Living",
