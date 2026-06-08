@@ -748,6 +748,67 @@ function EventsSection() {
   );
 }
 
+// ============ OPINION ============
+function OpinionSection() {
+  const items = window.OPINIONS;
+  if (!items || items.length === 0) return null;
+  const featured = items[0];
+  const rest = items.slice(1, 4);
+
+  return (
+    <section className="opinion-section">
+      <div className="opinion-inner">
+        {/* Header bar */}
+        <div className="opinion-header">
+          <span className="opinion-header-deco">"</span>
+          <div className="opinion-header-text">
+            <span className="opinion-eyebrow">OPINION</span>
+            <h2 className="opinion-section-label">มุมมอง &amp; บทวิเคราะห์</h2>
+          </div>
+          <a href="#" className="opinion-all-link">ดูคอลัมน์ทั้งหมด →</a>
+        </div>
+
+        {/* Body: featured left, list right */}
+        <div className="opinion-body">
+          {/* Featured columnist */}
+          <a href="#" className="opinion-featured">
+            <div className="opinion-featured-author">
+              <img className="opinion-avatar" src={featured.avatar} alt={featured.columnist} />
+              <div>
+                <span className="opinion-author-name">{featured.columnist}</span>
+                <span className="opinion-col-tag">{featured.tag}</span>
+              </div>
+            </div>
+            <p className="opinion-pull-quote">"{featured.excerpt}"</p>
+            <h3 className="opinion-headline">{featured.title}</h3>
+            <span className="opinion-readtime">อ่าน {featured.readTime}</span>
+          </a>
+
+          {/* Vertical divider */}
+          <div className="opinion-vdivider"></div>
+
+          {/* Columnist list */}
+          <div className="opinion-list">
+            {rest.map(op => (
+              <a href="#" key={op.id} className="opinion-row">
+                <img className="opinion-row-avatar" src={op.avatar} alt={op.columnist} />
+                <div className="opinion-row-body">
+                  <div className="opinion-row-top">
+                    <span className="opinion-row-author">{op.columnist}</span>
+                    <span className="opinion-row-tag">{op.tag}</span>
+                  </div>
+                  <h4 className="opinion-row-title">{op.title}</h4>
+                  <span className="opinion-row-time">อ่าน {op.readTime}</span>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 // ============ FOOTER ============
 function Footer() {
   return (
@@ -800,4 +861,4 @@ function Footer() {
   );
 }
 
-Object.assign(window, { Header, MegaPanel, Ticker, Hero, LatestGrid, ArticleCard, PopularSection, EventsSection, Footer });
+Object.assign(window, { Header, MegaPanel, Ticker, Hero, LatestGrid, ArticleCard, PopularSection, OpinionSection, EventsSection, Footer });
