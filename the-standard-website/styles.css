@@ -1682,16 +1682,16 @@ h1, h2, h3, h4, h5 { margin: 0; font-weight: 700; letter-spacing: -0.01em; }
 
 /* ============ OPINION SECTION ============ */
 .opinion-section {
-  background: #16140e;
+  background: #1a1a1a;
   position: relative;
   overflow: hidden;
 }
-/* Warm gold radial glow — subtle depth */
+/* Subtle red radial glow */
 .opinion-section::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse 65% 70% at 18% 55%, rgba(212,175,55,0.08) 0%, transparent 65%);
+  background: radial-gradient(ellipse 65% 70% at 18% 55%, rgba(230,51,42,0.05) 0%, transparent 65%);
   pointer-events: none;
 }
 .opinion-inner {
@@ -1713,8 +1713,8 @@ h1, h2, h3, h4, h5 { margin: 0; font-weight: 700; letter-spacing: -0.01em; }
 .opinion-header-deco {
   font-size: 68px;
   line-height: 0.75;
-  color: var(--accent);
-  opacity: 0.28;
+  color: var(--brand);
+  opacity: 0.55;
   font-family: Georgia, serif;
   user-select: none;
   flex-shrink: 0;
@@ -1727,7 +1727,7 @@ h1, h2, h3, h4, h5 { margin: 0; font-weight: 700; letter-spacing: -0.01em; }
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.28em;
-  color: var(--accent);
+  color: var(--brand);
   margin-bottom: 4px;
 }
 .opinion-section-label {
@@ -1743,7 +1743,7 @@ h1, h2, h3, h4, h5 { margin: 0; font-weight: 700; letter-spacing: -0.01em; }
   font-family: var(--sans);
   font-size: 12px;
   font-weight: 600;
-  color: var(--accent);
+  color: var(--brand);
   text-decoration: none;
   letter-spacing: 0.04em;
   opacity: 0.8;
@@ -1775,8 +1775,8 @@ h1, h2, h3, h4, h5 { margin: 0; font-weight: 700; letter-spacing: -0.01em; }
   right: 32px;
   font-size: 220px;
   line-height: 1;
-  color: var(--accent);
-  opacity: 0.035;
+  color: var(--brand);
+  opacity: 0.07;
   font-family: Georgia, serif;
   pointer-events: none;
   user-select: none;
@@ -1791,7 +1791,7 @@ h1, h2, h3, h4, h5 { margin: 0; font-weight: 700; letter-spacing: -0.01em; }
   width: 52px; height: 52px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid rgba(212,175,55,0.22);
+  border: 2px solid rgba(230,51,42,0.3);
   flex-shrink: 0;
 }
 .opinion-author-name {
@@ -1808,8 +1808,8 @@ h1, h2, h3, h4, h5 { margin: 0; font-weight: 700; letter-spacing: -0.01em; }
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.16em;
-  color: var(--accent);
-  background: rgba(212,175,55,0.1);
+  color: var(--brand);
+  background: rgba(230,51,42,0.1);
   padding: 2px 8px;
   border-radius: 2px;
 }
@@ -1822,7 +1822,7 @@ h1, h2, h3, h4, h5 { margin: 0; font-weight: 700; letter-spacing: -0.01em; }
   color: rgba(245,243,238,0.6);
   margin: 0 0 22px;
   padding-left: 18px;
-  border-left: 2px solid var(--accent);
+  border-left: 2px solid var(--brand);
 }
 .opinion-headline {
   font-family: var(--sans);
@@ -1835,7 +1835,7 @@ h1, h2, h3, h4, h5 { margin: 0; font-weight: 700; letter-spacing: -0.01em; }
   text-wrap: pretty;
   transition: color 0.15s;
 }
-.opinion-featured:hover .opinion-headline { color: var(--accent); }
+.opinion-featured:hover .opinion-headline { color: var(--brand); }
 .opinion-readtime {
   font-family: var(--sans);
   font-size: 11px;
@@ -1872,7 +1872,7 @@ h1, h2, h3, h4, h5 { margin: 0; font-weight: 700; letter-spacing: -0.01em; }
   width: 44px; height: 44px;
   border-radius: 50%;
   object-fit: cover;
-  border: 1.5px solid rgba(212,175,55,0.16);
+  border: 1.5px solid rgba(255,255,255,0.1);
   flex-shrink: 0;
   margin-top: 2px;
 }
@@ -1894,8 +1894,8 @@ h1, h2, h3, h4, h5 { margin: 0; font-weight: 700; letter-spacing: -0.01em; }
   font-size: 9px;
   font-weight: 600;
   letter-spacing: 0.12em;
-  color: var(--accent);
-  opacity: 0.62;
+  color: var(--brand);
+  opacity: 0.82;
 }
 .opinion-row-title {
   font-family: var(--sans);

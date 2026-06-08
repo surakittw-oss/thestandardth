@@ -262,43 +262,43 @@ window.VERTICALS = [
 
 window.OPINIONS = [
   {
-    id: "op-wanchai",
-    columnist: "วันชัย ตันติวิทยาพิทักษ์",
-    tag: "สังคม-การเมือง",
-    avatar: "https://ui-avatars.com/api/?name=วช&background=2a2014&color=d4af37&size=128&bold=true&font-size=0.45",
-    title: "การเลือกตั้ง 2569: เมื่อคะแนนเสียงของประชาชนหมายถึงอะไรมากกว่าแค่การเปลี่ยนรัฐบาล",
-    excerpt: "เราต่างรู้ดีว่าการเลือกตั้งไม่เคยสะอาดบริสุทธิ์ แต่ครั้งนี้ดูเหมือนผู้มีสิทธิ์ลงคะแนนเริ่มตระหนักถึงน้ำหนักของตัวเองมากขึ้น",
-    time: "3 ชั่วโมงที่แล้ว",
+    id: "op-de-influencing",
+    columnist: "THE SECRET SAUCE",
+    tag: "สื่อ-การตลาด",
+    avatar: "https://ui-avatars.com/api/?name=TSS&background=1f1f1f&color=e6332a&size=128&bold=true&font-size=0.4",
+    title: "เทรนด์ De-Influencing: จุดจบ Influencer สายป้ายยาขายฝัน เมื่อผู้บริโภคขอแบนโฆษณาจัดฉากเกินจริง",
+    excerpt: "เมื่อความจริงแพงกว่าความฝัน คนดูเริ่มตั้งคำถามว่าสิ่งที่อินฟลูเอนเซอร์ขายนั้น ดีพอสำหรับชีวิตจริงหรือเปล่า",
+    time: "2 ชั่วโมงที่แล้ว",
     readTime: "8 นาที"
   },
   {
-    id: "op-kittiratt",
-    columnist: "กิตติรัตน์ ณ ระนอง",
-    tag: "เศรษฐกิจ",
-    avatar: "https://ui-avatars.com/api/?name=กร&background=142814&color=7ec87c&size=128&bold=true&font-size=0.45",
-    title: "ดอกเบี้ยลด แต่เศรษฐกิจไม่ฟื้น: ปัญหาโครงสร้างที่นโยบายการเงินแก้ไม่ได้",
-    excerpt: "การลดดอกเบี้ยเป็นเพียงยาแก้ปวด ไม่ใช่ยารักษาโรค ถ้าเราไม่กลับมาตั้งคำถามกับโมเดลเศรษฐกิจที่ล้าหลัง",
-    time: "5 ชั่วโมงที่แล้ว",
+    id: "op-china-university",
+    columnist: "THE SECRET SAUCE",
+    tag: "นโยบาย-การศึกษา",
+    avatar: "https://ui-avatars.com/api/?name=TSS&background=1f1f1f&color=e6332a&size=128&bold=true&font-size=0.4",
+    title: "จีนเปิด 38 วิชาใหม่ระดับมหาลัย แผนสร้างชาติที่คนธรรมดาต้องรู้ให้ทัน",
+    excerpt: "วิชาที่จีนเลือกเปิดสอนบอกทิศทางประเทศ และทำไมนักศึกษาในที่อื่นควรจับตาดูให้ดี",
+    time: "4 ชั่วโมงที่แล้ว",
     readTime: "6 นาที"
   },
   {
-    id: "op-piyabutr",
-    columnist: "ปิยบุตร แสงกนกกุล",
-    tag: "นิติศาสตร์",
-    avatar: "https://ui-avatars.com/api/?name=ปบ&background=14202a&color=6eb0e8&size=128&bold=true&font-size=0.45",
-    title: "รัฐธรรมนูญฉบับใหม่: ถ้าร่างโดยผู้แพ้ คุณคาดหวังอะไรได้บ้าง?",
-    excerpt: "ประชาธิปไตยไม่ใช่สิ่งที่รอให้ใครมอบให้ มันต้องถูกสร้างขึ้นโดยคนที่กล้าเสียอะไรบางอย่างเพื่อมัน",
+    id: "op-gold",
+    columnist: "ฐิภา นววัฒนทรัพย์",
+    tag: "การลงทุน",
+    avatar: "https://ui-avatars.com/api/?name=ฐน&background=1f1f1f&color=e6332a&size=128&bold=true&font-size=0.45",
+    title: "แรงซื้อทองคำยังแน่น ไม่ยอมให้เข้าสู่ Bear Market",
+    excerpt: "เมื่อความไม่แน่นอนของโลกยังสูง ทองคำจึงไม่ใช่แค่ของสะสม แต่คือเกราะป้องกันที่นักลงทุนยังเชื่อถือ",
     time: "1 วันที่แล้ว",
-    readTime: "10 นาที"
+    readTime: "5 นาที"
   },
   {
-    id: "op-sarinee",
-    columnist: "สฤณี อาชวานันทกุล",
-    tag: "เทคโนโลยี-สังคม",
-    avatar: "https://ui-avatars.com/api/?name=สอ&background=2a1428&color=e87cbf&size=128&bold=true&font-size=0.45",
-    title: "AI ในวันที่คนไทยยังไม่มีดิจิทัลสิทธิ: ใครได้ประโยชน์ และใครคือเหยื่อ?",
-    excerpt: "ก่อนที่เราจะตื่นเต้นกับ AI ลองถามว่าข้อมูลของคุณอยู่ที่ไหน และใครเป็นคนตัดสินใจแทนคุณ",
+    id: "op-ev",
+    columnist: "THE STANDARD OPINION",
+    tag: "สิ่งแวดล้อม-พลังงาน",
+    avatar: "https://ui-avatars.com/api/?name=TSO&background=1f1f1f&color=e6332a&size=128&bold=true&font-size=0.4",
+    title: "EV ไม่ใช่แค่เรื่องสิ่งแวดล้อม แต่อาจเป็นทางรอดด้านพลังงานของอาเซียน",
+    excerpt: "การเปลี่ยนผ่านสู่ยานยนต์ไฟฟ้าในอาเซียนไม่ใช่แค่ลดคาร์บอน แต่คือโอกาสหลุดพ้นจากการพึ่งพาน้ำมันนำเข้า",
     time: "1 วันที่แล้ว",
-    readTime: "9 นาที"
+    readTime: "7 นาที"
   }
 ];
