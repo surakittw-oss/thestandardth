@@ -889,6 +889,26 @@ function OpinionSection() {
   );
 }
 
+// YouTube play button SVG (official icon shape)
+const YTPlayIcon = ({ width = 68, opacity = 1 }) => {
+  const h = Math.round(width * 48 / 68);
+  return (
+    <svg width={width} height={h} viewBox="0 0 68 48" fill="none" style={{opacity, filter:'drop-shadow(0 3px 12px rgba(0,0,0,0.5))'}}>
+      <path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55c-2.93.78-4.63 3.26-5.42 6.19C.06 13.05 0 24 0 24s.06 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C67.94 34.95 68 24 68 24s-.06-10.95-1.48-16.26z" fill="#FF0000"/>
+      <path d="M45 24 27 14v20z" fill="#fff"/>
+    </svg>
+  );
+};
+
+// YouTube Shorts icon (vertical short video icon)
+const YTShortsIcon = ({ size = 38 }) => (
+  <svg width={size} height={size} viewBox="0 0 48 48" fill="none" style={{filter:'drop-shadow(0 2px 8px rgba(0,0,0,0.5))'}}>
+    <rect width="48" height="48" rx="12" fill="#FF0000"/>
+    <path d="M34.5 20.5c1.5.87 1.5 3.13 0 4L20 33.16A2.31 2.31 0 0 1 16.5 31V17a2.31 2.31 0 0 1 3.5-2.16L34.5 20.5z" fill="#fff"/>
+    <path d="M34 11h-4l2.5-3 1.5 3z" fill="#fff" opacity="0.7"/>
+  </svg>
+);
+
 // ============ VIDEO SECTION ============
 function VideoSection() {
   const items = window.VIDEOS;
@@ -896,27 +916,11 @@ function VideoSection() {
   const featured = items[0];
   const rest = items.slice(1);
 
-  const PlayIcon = ({ size = 56 }) => (
-    <svg width={size} height={size} viewBox="0 0 56 56" fill="none">
-      <circle cx="28" cy="28" r="28" fill="rgba(230,51,42,0.88)"/>
-      <polygon points="22,17 42,28 22,39" fill="#fff"/>
-    </svg>
-  );
-
-  const SmallPlayIcon = () => (
-    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-      <circle cx="14" cy="14" r="14" fill="rgba(230,51,42,0.82)"/>
-      <polygon points="11,8 21,14 11,20" fill="#fff"/>
-    </svg>
-  );
-
   return (
     <section className="video-section">
       <div className="video-inner">
         <div className="media-section-header">
-          <span className="media-section-eyebrow">▶ VIDEO</span>
-          <div className="media-section-rule"></div>
-          <h2 className="media-section-title" style={{color:'rgba(245,243,238,0.95)'}}>วิดีโอล่าสุด</h2>
+          <h2 className="media-big-title" style={{color:'rgba(245,243,238,0.95)'}}>VIDEO</h2>
           <div className="media-section-rule"></div>
           <a href="https://www.youtube.com/@TheStandardCo" className="media-section-all" style={{color:'var(--brand)'}}>ดูทั้งหมด →</a>
         </div>
@@ -925,7 +929,7 @@ function VideoSection() {
           <a href={featured.url} className="video-featured">
             <div className="video-thumb-wrap">
               <img src={featured.thumb} alt={featured.title} loading="lazy" />
-              <div className="video-play-btn"><PlayIcon /></div>
+              <div className="video-play-btn"><YTPlayIcon width={80} /></div>
               <span className="video-duration-badge">{featured.duration}</span>
             </div>
             <span className="video-channel-tag">{featured.channel}</span>
@@ -943,7 +947,7 @@ function VideoSection() {
               <a href={v.url} key={v.id} className="video-row">
                 <div className="video-row-thumb">
                   <img src={v.thumb} alt={v.title} loading="lazy" />
-                  <div className="video-row-play"><SmallPlayIcon /></div>
+                  <div className="video-row-play"><YTPlayIcon width={44} /></div>
                   <span className="video-row-duration">{v.duration}</span>
                 </div>
                 <div className="video-row-body">
@@ -969,9 +973,7 @@ function ShortClipSection() {
     <section className="shorts-section">
       <div className="shorts-inner">
         <div className="media-section-header">
-          <span className="media-section-eyebrow">⚡ SHORTS</span>
-          <div className="media-section-rule" style={{opacity:0.08}}></div>
-          <h2 className="media-section-title" style={{color:'rgba(245,243,238,0.95)'}}>Short Clip</h2>
+          <h2 className="media-big-title" style={{color:'rgba(245,243,238,0.95)'}}>SHORTS</h2>
           <div className="media-section-rule" style={{opacity:0.08}}></div>
           <a href="#" className="media-section-all" style={{color:'rgba(245,243,238,0.45)'}}>ดูทั้งหมด →</a>
         </div>
@@ -981,12 +983,7 @@ function ShortClipSection() {
               <img className="short-card-thumb" src={clip.thumb} alt={clip.title} loading="lazy" />
               <div className="short-card-overlay"></div>
               <span className="short-card-tag">{clip.tag}</span>
-              <div className="short-card-play">
-                <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-                  <circle cx="20" cy="20" r="20" fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5"/>
-                  <polygon points="16,12 30,20 16,28" fill="#fff"/>
-                </svg>
-              </div>
+              <div className="short-card-play"><YTShortsIcon size={42} /></div>
               <span className="short-card-duration">{clip.duration}</span>
               <p className="short-card-title">{clip.title}</p>
             </a>
