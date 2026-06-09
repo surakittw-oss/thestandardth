@@ -997,66 +997,6 @@ function ShortClipSection() {
   );
 }
 
-// ============ PODCAST SECTION ============
-function PodcastSection() {
-  const items = window.PODCASTS;
-  if (!items || items.length === 0) return null;
-
-  const platformLabels = { spotify: 'SPOTIFY', apple: 'APPLE', youtube: 'YOUTUBE' };
-
-  return (
-    <section className="podcast-section">
-      <div className="podcast-inner">
-        <div className="media-section-header">
-          <span className="media-section-eyebrow">🎙 PODCAST</span>
-          <div className="media-section-rule" style={{opacity:0.15}}></div>
-          <h2 className="media-section-title">Podcast</h2>
-          <div className="media-section-rule" style={{opacity:0.15}}></div>
-          <a href="https://thestandard.co/podcast/" className="media-section-all">ดูทั้งหมด →</a>
-        </div>
-        <div className="podcast-list">
-          {items.map(pod => (
-            <div key={pod.id} className="podcast-card">
-              {/* Cover */}
-              <img className="podcast-cover" src={pod.cover} alt={pod.show} loading="lazy" />
-
-              {/* Body */}
-              <div className="podcast-card-body">
-                <div style={{display:'flex', gap:'8px', alignItems:'center', marginBottom:'6px', flexWrap:'wrap'}}>
-                  <span className="podcast-ep-tag">{pod.ep}</span>
-                  <span className="podcast-show">{pod.show}</span>
-                </div>
-                <h4 className="podcast-card-title">{pod.title}</h4>
-                {/* Animated waveform */}
-                <div className="podcast-waveform">
-                  {[...Array(10)].map((_, i) => <span key={i}></span>)}
-                </div>
-                <div className="podcast-meta">
-                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"><circle cx="6" cy="6" r="5"/><polyline points="6,3 6,6 8,7.5"/></svg>
-                  {pod.duration}
-                </div>
-              </div>
-
-              {/* Actions */}
-              <div className="podcast-actions">
-                <a href={pod.url} className="podcast-play-btn">
-                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><polygon points="2,1 11,6 2,11" fill="currentColor"/></svg>
-                  เล่นเลย
-                </a>
-                <div className="podcast-platforms">
-                  {pod.platforms.map(p => (
-                    <span key={p} className={`podcast-platform-badge ${p}`}>{platformLabels[p]}</span>
-                  ))}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
 // ============ FOOTER ============
 function Footer() {
   return (
@@ -1109,4 +1049,4 @@ function Footer() {
   );
 }
 
-Object.assign(window, { Header, MegaPanel, Ticker, Hero, LatestGrid, ArticleCard, PopularSection, OpinionSection, VideoSection, ShortClipSection, PodcastSection, EventsSection, Footer });
+Object.assign(window, { Header, MegaPanel, Ticker, Hero, LatestGrid, ArticleCard, PopularSection, OpinionSection, VideoSection, ShortClipSection, EventsSection, Footer });
