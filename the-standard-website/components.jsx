@@ -990,14 +990,13 @@ function ShortClipSection() {
             <YTShortsHeadIcon />SHORTS
           </h2>
           <div className="media-section-rule" style={{opacity:0.08}}></div>
-          <a href="#" className="media-section-all" style={{color:'rgba(245,243,238,0.45)'}}>ดูทั้งหมด →</a>
+          <a href="#" className="media-section-all" style={{color:'var(--brand)'}}>ดูทั้งหมด →</a>
         </div>
         <div className="shorts-reel">
           {items.map(clip => (
             <a href={clip.url} key={clip.id} className="short-card">
               <img className="short-card-thumb" src={clip.thumb} alt={clip.title} loading="lazy" />
               <div className="short-card-overlay"></div>
-              <span className="short-card-tag">{clip.tag}</span>
               <div className="short-card-play">
                 <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
                   <circle cx="20" cy="20" r="20" fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5"/>
