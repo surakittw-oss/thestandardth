@@ -889,6 +889,174 @@ function OpinionSection() {
   );
 }
 
+// ============ VIDEO SECTION ============
+function VideoSection() {
+  const items = window.VIDEOS;
+  if (!items || items.length === 0) return null;
+  const featured = items[0];
+  const rest = items.slice(1);
+
+  const PlayIcon = ({ size = 56 }) => (
+    <svg width={size} height={size} viewBox="0 0 56 56" fill="none">
+      <circle cx="28" cy="28" r="28" fill="rgba(230,51,42,0.88)"/>
+      <polygon points="22,17 42,28 22,39" fill="#fff"/>
+    </svg>
+  );
+
+  const SmallPlayIcon = () => (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <circle cx="14" cy="14" r="14" fill="rgba(230,51,42,0.82)"/>
+      <polygon points="11,8 21,14 11,20" fill="#fff"/>
+    </svg>
+  );
+
+  return (
+    <section className="video-section">
+      <div className="video-inner">
+        <div className="media-section-header">
+          <span className="media-section-eyebrow">▶ VIDEO</span>
+          <div className="media-section-rule"></div>
+          <h2 className="media-section-title" style={{color:'rgba(245,243,238,0.95)'}}>วิดีโอล่าสุด</h2>
+          <div className="media-section-rule"></div>
+          <a href="https://www.youtube.com/@TheStandardCo" className="media-section-all" style={{color:'var(--brand)'}}>ดูทั้งหมด →</a>
+        </div>
+        <div className="video-body">
+          {/* Featured */}
+          <a href={featured.url} className="video-featured">
+            <div className="video-thumb-wrap">
+              <img src={featured.thumb} alt={featured.title} loading="lazy" />
+              <div className="video-play-btn"><PlayIcon /></div>
+              <span className="video-duration-badge">{featured.duration}</span>
+            </div>
+            <span className="video-channel-tag">{featured.channel}</span>
+            <h3 className="video-featured-title">{featured.title}</h3>
+            <div className="video-meta">
+              <span>{featured.views} views</span>
+              <span>·</span>
+              <span>{featured.time}</span>
+            </div>
+          </a>
+
+          {/* Sidebar list */}
+          <div className="video-list">
+            {rest.map(v => (
+              <a href={v.url} key={v.id} className="video-row">
+                <div className="video-row-thumb">
+                  <img src={v.thumb} alt={v.title} loading="lazy" />
+                  <div className="video-row-play"><SmallPlayIcon /></div>
+                  <span className="video-row-duration">{v.duration}</span>
+                </div>
+                <div className="video-row-body">
+                  <span className="video-row-tag">{v.channel}</span>
+                  <h4 className="video-row-title">{v.title}</h4>
+                  <span className="video-row-meta">{v.views} · {v.time}</span>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ============ SHORT CLIPS SECTION ============
+function ShortClipSection() {
+  const items = window.SHORT_CLIPS;
+  if (!items || items.length === 0) return null;
+
+  return (
+    <section className="shorts-section">
+      <div className="shorts-inner">
+        <div className="media-section-header">
+          <span className="media-section-eyebrow">⚡ SHORTS</span>
+          <div className="media-section-rule" style={{opacity:0.08}}></div>
+          <h2 className="media-section-title" style={{color:'rgba(245,243,238,0.95)'}}>Short Clip</h2>
+          <div className="media-section-rule" style={{opacity:0.08}}></div>
+          <a href="#" className="media-section-all" style={{color:'rgba(245,243,238,0.45)'}}>ดูทั้งหมด →</a>
+        </div>
+        <div className="shorts-reel">
+          {items.map(clip => (
+            <a href={clip.url} key={clip.id} className="short-card">
+              <img className="short-card-thumb" src={clip.thumb} alt={clip.title} loading="lazy" />
+              <div className="short-card-overlay"></div>
+              <span className="short-card-tag">{clip.tag}</span>
+              <div className="short-card-play">
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                  <circle cx="20" cy="20" r="20" fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5"/>
+                  <polygon points="16,12 30,20 16,28" fill="#fff"/>
+                </svg>
+              </div>
+              <span className="short-card-duration">{clip.duration}</span>
+              <p className="short-card-title">{clip.title}</p>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ============ PODCAST SECTION ============
+function PodcastSection() {
+  const items = window.PODCASTS;
+  if (!items || items.length === 0) return null;
+
+  const platformLabels = { spotify: 'SPOTIFY', apple: 'APPLE', youtube: 'YOUTUBE' };
+
+  return (
+    <section className="podcast-section">
+      <div className="podcast-inner">
+        <div className="media-section-header">
+          <span className="media-section-eyebrow">🎙 PODCAST</span>
+          <div className="media-section-rule" style={{opacity:0.15}}></div>
+          <h2 className="media-section-title">Podcast</h2>
+          <div className="media-section-rule" style={{opacity:0.15}}></div>
+          <a href="https://thestandard.co/podcast/" className="media-section-all">ดูทั้งหมด →</a>
+        </div>
+        <div className="podcast-list">
+          {items.map(pod => (
+            <div key={pod.id} className="podcast-card">
+              {/* Cover */}
+              <img className="podcast-cover" src={pod.cover} alt={pod.show} loading="lazy" />
+
+              {/* Body */}
+              <div className="podcast-card-body">
+                <div style={{display:'flex', gap:'8px', alignItems:'center', marginBottom:'6px', flexWrap:'wrap'}}>
+                  <span className="podcast-ep-tag">{pod.ep}</span>
+                  <span className="podcast-show">{pod.show}</span>
+                </div>
+                <h4 className="podcast-card-title">{pod.title}</h4>
+                {/* Animated waveform */}
+                <div className="podcast-waveform">
+                  {[...Array(10)].map((_, i) => <span key={i}></span>)}
+                </div>
+                <div className="podcast-meta">
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"><circle cx="6" cy="6" r="5"/><polyline points="6,3 6,6 8,7.5"/></svg>
+                  {pod.duration}
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="podcast-actions">
+                <a href={pod.url} className="podcast-play-btn">
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><polygon points="2,1 11,6 2,11" fill="currentColor"/></svg>
+                  เล่นเลย
+                </a>
+                <div className="podcast-platforms">
+                  {pod.platforms.map(p => (
+                    <span key={p} className={`podcast-platform-badge ${p}`}>{platformLabels[p]}</span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 // ============ FOOTER ============
 function Footer() {
   return (
@@ -941,4 +1109,4 @@ function Footer() {
   );
 }
 
-Object.assign(window, { Header, MegaPanel, Ticker, Hero, LatestGrid, ArticleCard, PopularSection, OpinionSection, EventsSection, Footer });
+Object.assign(window, { Header, MegaPanel, Ticker, Hero, LatestGrid, ArticleCard, PopularSection, OpinionSection, VideoSection, ShortClipSection, PodcastSection, EventsSection, Footer });

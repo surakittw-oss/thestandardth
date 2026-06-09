@@ -306,3 +306,125 @@ window.OPINIONS = [
     readTime: "7 นาที"
   }
 ];
+
+// ── VIDEOS ──────────────────────────────────────────────────────────────────
+window.VIDEOS = [
+  {
+    id: "v-ai-war",
+    title: "สงคราม AI: เมื่อ OpenAI, Google และ Meta แข่งกันสร้างโมเดลที่ฉลาดที่สุดในโลก",
+    channel: "THE STANDARD",
+    duration: "18:42",
+    views: "128K",
+    time: "2 วันที่แล้ว",
+    thumb: "https://images.weserv.nl/?url=i.ytimg.com/vi/aircAruvnKk/maxresdefault.jpg&w=800&h=450&fit=cover&output=jpg&q=82",
+    url: "https://www.youtube.com/@TheStandardCo"
+  },
+  {
+    id: "v-election",
+    title: "เลือกตั้ง 2569: ทุกพรรคเสนออะไร แล้วประชาชนได้อะไรจริงๆ",
+    channel: "THE STANDARD",
+    duration: "24:17",
+    views: "89K",
+    time: "3 วันที่แล้ว",
+    thumb: "https://images.weserv.nl/?url=i.ytimg.com/vi/LXb3EKWsInQ/maxresdefault.jpg&w=800&h=450&fit=cover&output=jpg&q=82",
+    url: "https://www.youtube.com/@TheStandardCo"
+  },
+  {
+    id: "v-economy",
+    title: "เศรษฐกิจไทยหลัง Q1/2569 ดีขึ้นหรือแย่ลง? เปิดตัวเลข GDP ล่าสุด",
+    channel: "THE STANDARD WEALTH",
+    duration: "12:05",
+    views: "54K",
+    time: "4 วันที่แล้ว",
+    thumb: "https://images.weserv.nl/?url=i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg&w=800&h=450&fit=cover&output=jpg&q=82",
+    url: "https://www.youtube.com/@TheStandardCo"
+  },
+  {
+    id: "v-crypto",
+    title: "Crypto ในยุค Regulation: นักลงทุนไทยต้องรู้อะไรบ้าง",
+    channel: "THE STANDARD WEALTH",
+    duration: "09:33",
+    views: "41K",
+    time: "5 วันที่แล้ว",
+    thumb: "https://images.weserv.nl/?url=i.ytimg.com/vi/ZZ5LpwO-An4/maxresdefault.jpg&w=800&h=450&fit=cover&output=jpg&q=82",
+    url: "https://www.youtube.com/@TheStandardCo"
+  }
+];
+
+// ── SHORT CLIPS ──────────────────────────────────────────────────────────────
+window.SHORT_CLIPS = [
+  {
+    id: "s-tariff",
+    title: "ทำไมภาษีนำเข้าสหรัฐฯ ถึงกระทบราคาสินค้าในไทย",
+    duration: "0:58",
+    tag: "#SHORTS",
+    thumb: "https://images.weserv.nl/?url=i.ytimg.com/vi/PkZNo7MFNFg/hqdefault.jpg&w=360&h=640&fit=cover&output=jpg&q=82",
+    url: "#"
+  },
+  {
+    id: "s-ai-job",
+    title: "3 อาชีพที่ AI เข้ามาแทนแล้ว และ 3 อาชีพที่ยังปลอดภัย",
+    duration: "1:02",
+    tag: "#SHORTS",
+    thumb: "https://images.weserv.nl/?url=i.ytimg.com/vi/rfscVS0vtbw/hqdefault.jpg&w=360&h=640&fit=cover&output=jpg&q=82",
+    url: "#"
+  },
+  {
+    id: "s-gold",
+    title: "ทองคำทะลุ $2,000 อีกแล้ว เกิดอะไรขึ้น?",
+    duration: "0:45",
+    tag: "#SHORTS",
+    thumb: "https://images.weserv.nl/?url=i.ytimg.com/vi/8jPQjjsBbIc/hqdefault.jpg&w=360&h=640&fit=cover&output=jpg&q=82",
+    url: "#"
+  },
+  {
+    id: "s-ev",
+    title: "EV แบตเตอรี่หมดอายุ ทิ้งยังไงถึงจะไม่ทำลายโลก",
+    duration: "1:15",
+    tag: "#SHORTS",
+    thumb: "https://images.weserv.nl/?url=i.ytimg.com/vi/t8QEOBgLBQU/hqdefault.jpg&w=360&h=640&fit=cover&output=jpg&q=82",
+    url: "#"
+  },
+  {
+    id: "s-rate",
+    title: "ดอกเบี้ยขึ้น = บ้านแพงขึ้น? อธิบายใน 60 วิ",
+    duration: "0:55",
+    tag: "#SHORTS",
+    thumb: "https://images.weserv.nl/?url=i.ytimg.com/vi/HluANRwPyNo/hqdefault.jpg&w=360&h=640&fit=cover&output=jpg&q=82",
+    url: "#"
+  }
+];
+
+// ── PODCASTS ─────────────────────────────────────────────────────────────────
+window.PODCASTS = [
+  {
+    id: "pod-tss-265",
+    ep: "EP.265",
+    title: "De-influencing คือจุดจบ Influencer Marketing หรือแค่การปรับตัว?",
+    show: "THE SECRET SAUCE",
+    duration: "52 นาที",
+    cover: "https://images.weserv.nl/?url=thestandard.co/wp-content/uploads/2024/01/THE-SECRET-SAUCE-COVER.jpg&w=200&h=200&fit=cover&output=jpg&q=82",
+    platforms: ["spotify", "apple", "youtube"],
+    url: "https://thestandard.co/podcast/the-secret-sauce/"
+  },
+  {
+    id: "pod-wealth-88",
+    ep: "EP.88",
+    title: "ลงทุนในยุค AI: พอร์ตแบบไหนที่ยังชนะตลาดได้ในปี 2026",
+    show: "THE STANDARD WEALTH PODCAST",
+    duration: "44 นาที",
+    cover: "https://images.weserv.nl/?url=thestandard.co/wp-content/uploads/2024/01/WEALTH-PODCAST-COVER.jpg&w=200&h=200&fit=cover&output=jpg&q=82",
+    platforms: ["spotify", "youtube"],
+    url: "https://thestandard.co/podcast/the-standard-wealth-podcast/"
+  },
+  {
+    id: "pod-tss-264",
+    ep: "EP.264",
+    title: "ทำไมบริษัทไทยยังกลัว ESG และใครได้ประโยชน์จากความกลัวนั้น",
+    show: "THE SECRET SAUCE",
+    duration: "48 นาที",
+    cover: "https://images.weserv.nl/?url=thestandard.co/wp-content/uploads/2024/01/THE-SECRET-SAUCE-COVER.jpg&w=200&h=200&fit=cover&output=jpg&q=82",
+    platforms: ["spotify", "apple", "youtube"],
+    url: "https://thestandard.co/podcast/the-secret-sauce/"
+  }
+];
