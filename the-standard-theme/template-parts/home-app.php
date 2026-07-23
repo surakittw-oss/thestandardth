@@ -7,6 +7,12 @@
 ?>
 <div id="root"></div>
 <?php ts_the_runtime_scripts(); ?>
+<script>
+	// Prefer live WordPress posts (window.TS_POSTS) over the static data.js set.
+	if (Array.isArray(window.TS_POSTS) && window.TS_POSTS.length) {
+		window.ARTICLES = window.TS_POSTS;
+	}
+</script>
 <script type="text/babel">
 function App() {
 	const [dark, setDark] = React.useState(false);

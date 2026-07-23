@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // No direct access.
 }
 
-define( 'TS_THEME_VERSION', '1.1.0' );
+define( 'TS_THEME_VERSION', '1.2.0' );
 
 /**
  * Theme supports.
@@ -105,4 +105,67 @@ function ts_the_runtime_scripts() {
 	<script src="<?php echo esc_url( $uri . '/assets/js/data.js' ); ?>?ver=<?php echo esc_attr( TS_THEME_VERSION ); ?>"></script>
 	<script type="text/babel" src="<?php echo esc_url( $uri . '/assets/js/components.jsx' ); ?>?ver=<?php echo esc_attr( TS_THEME_VERSION ); ?>"></script>
 	<?php
+}
+
+/**
+ * Resolve a card image URL for a post: featured image, else the first inline
+ * <img> in the content, else empty string.
+ *
+ * @param int    $post_id Post ID.
+ * @param string $size    Image size.
+ * @return string
+ */
+function ts_post_image_url( $post_id, $size = 'large' ) {
+	$url = get_the_post_thumbnail_url( $post_id, $size );
+	if ( $url ) {
+		return $url;
+	}
+	$post = get_post( $post_id );
+	if ( $post && preg_match( '/<img[^>]+src=["\']([^"\']+)["\']/i', $post->post_content, $m ) ) {
+		return $m[1];
+	}
+	return '';
+}
+
+/**
+ * Build the list of recent posts consumed by the homepage React app
+ * (window.TS_POSTS → overrides the static window.ARTICLES).
+ *
+ * Each entry matches the article shape the components expect, plus `url`
+ * (the real permalink) so cards link to the live post.
+ *
+ * @param int $limit Number of posts.
+ * @return array
+ */
+function ts_home_posts( $limit = 24 ) {
+	$q = new WP_Query(
+		array(
+			'post_status'         => 'publish',
+			'posts_per_page'      => $limit,
+			'ignore_sticky_posts' => false,
+			'no_found_rows'       => true,
+		)
+	);
+
+	$out = array();
+	while ( $q->have_posts() ) {
+		$q->the_post();
+		$cats    = get_the_category();
+		$minutes = max( 1, (int) ceil( mb_strlen( wp_strip_all_tags( apply_filters( 'the_content', get_the_content() ) ) ) / 400 ) );
+
+		$out[] = array(
+			'id'       => (string) get_the_ID(),
+			'url'      => get_permalink(),
+			'category' => ! empty( $cats ) ? $cats[0]->name : '',
+			'title'    => get_the_title(),
+			'excerpt'  => wp_strip_all_tags( get_the_excerpt() ),
+			'image'    => ts_post_image_url( get_the_ID(), 'large' ),
+			'time'     => get_the_date(),
+			'author'   => get_the_author(),
+			'readTime' => $minutes . ' ' . __( 'นาที', 'the-standard' ),
+		);
+	}
+	wp_reset_postdata();
+
+	return $out;
 }

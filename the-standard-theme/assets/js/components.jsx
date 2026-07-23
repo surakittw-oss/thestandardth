@@ -4,6 +4,11 @@
 // "article.html?id=..." triggers a 301 that drops the query on `serve`.
 const articleUrl = (id) => (window.TS_ARTICLE_BASE || 'article') + (String(window.TS_ARTICLE_BASE||'').indexOf('?')>=0 ? '&' : '?') + 'id=' + encodeURIComponent(id);
 
+// Link target for an article card: prefer a real permalink (a.url, supplied
+// when the page is driven by WordPress posts) and fall back to the static
+// article-page URL for the standalone prototype.
+const postHref = (a) => (a && a.url) || articleUrl(a && a.id);
+
 // ============ SVG ICONS ============
 const Icons = {
   sun: (
@@ -444,7 +449,7 @@ function MegaPanel({ cat, onEnter, onLeave, onPick }) {
           <span className="mega-featured-head">เรื่องเด่น</span>
           <div className={`mega-feature-list ${isNews ? 'is-row' : ''}`}>
             {featured.map(a => (
-              <a href={articleUrl(a.id)} key={a.id} className="mega-feature-card">
+              <a href={postHref(a)} key={a.id} className="mega-feature-card">
                 <div className="mega-feature-img" style={{ backgroundImage: `url(${a.image})` }}></div>
                 <div className="mega-feature-body">
                   <span className="cat-tag-sm">{a.category}</span>
@@ -494,7 +499,7 @@ function Hero({ articles, variant }) {
   if (variant === 'bento') {
     return (
       <section className="hero hero-bento">
-        <a href={articleUrl(main.id)} className="bento-cell bento-hero">
+        <a href={postHref(main)} className="bento-cell bento-hero">
           <div className="bento-hero-img" style={{ backgroundImage: `url(${main.image})` }}></div>
           <div className="bento-hero-overlay">
             <span className="cat-tag light">{main.category}</span>
@@ -508,7 +513,7 @@ function Hero({ articles, variant }) {
           </div>
         </a>
         {sides.map((a, i) => (
-          <a href={articleUrl(a.id)} key={a.id} className={`bento-cell bento-side bento-side-${i}`}>
+          <a href={postHref(a)} key={a.id} className={`bento-cell bento-side bento-side-${i}`}>
             <div className="bento-side-img" style={{ backgroundImage: `url(${a.image})` }}></div>
             <div className="bento-side-body">
               <span className="cat-tag">{a.category}</span>
@@ -540,7 +545,7 @@ function Hero({ articles, variant }) {
         </article>
         <div className="hero-side-mag">
           {sides.map(a => (
-            <a href={articleUrl(a.id)} className="hero-side-card-mag" key={a.id}>
+            <a href={postHref(a)} className="hero-side-card-mag" key={a.id}>
               <div className="hero-side-thumb" style={{ backgroundImage: `url(${a.image})` }}></div>
               <div className="hero-side-body">
                 <span className="cat-tag">{a.category}</span>
@@ -558,7 +563,7 @@ function Hero({ articles, variant }) {
     const grid6 = articles.slice(1, 7);
     return (
       <section className="hero hero-minimal">
-        <a href={articleUrl(main.id)} className="hero-minimal-feature">
+        <a href={postHref(main)} className="hero-minimal-feature">
           <div className="hero-minimal-feature-img" style={{ backgroundImage: `url(${main.image})` }}></div>
           <div className="hero-minimal-feature-body">
             <span className="cat-tag">{main.category}</span>
@@ -575,7 +580,7 @@ function Hero({ articles, variant }) {
         </a>
         <div className="hero-minimal-grid">
           {grid6.map(a => (
-            <a href={articleUrl(a.id)} key={a.id} className="hero-minimal-card">
+            <a href={postHref(a)} key={a.id} className="hero-minimal-card">
               <div className="hero-minimal-card-img" style={{ backgroundImage: `url(${a.image})` }}></div>
               <div className="hero-minimal-card-body">
                 <span className="cat-tag-sm">{a.category}</span>
@@ -593,7 +598,7 @@ function Hero({ articles, variant }) {
   return (
     <section className="hero hero-editorial">
       <article className="hero-main">
-        <a href={articleUrl(main.id)} className="hero-main-link">
+        <a href={postHref(main)} className="hero-main-link">
           <div className="hero-main-img" style={{ backgroundImage: `url(${main.image})` }}></div>
           <div className="hero-main-body">
             <span className="cat-tag">{main.category}</span>
@@ -611,7 +616,7 @@ function Hero({ articles, variant }) {
       </article>
       <aside className="hero-side">
         {sides.map((a, i) => (
-          <a href={articleUrl(a.id)} className="hero-side-card" key={a.id}>
+          <a href={postHref(a)} className="hero-side-card" key={a.id}>
             {i === 0 && (
               <div className="hero-side-thumb-lg" style={{ backgroundImage: `url(${a.image})` }}></div>
             )}
@@ -665,7 +670,7 @@ function ArticleCard({ article, idx, variant }) {
   if (variant === 'bento') {
     // Sized via parent grid; image-first card with overlay
     return (
-      <a href={articleUrl(article.id)} className="bento-card">
+      <a href={postHref(article)} className="bento-card">
         <div className="bento-card-img" style={{ backgroundImage: `url(${article.image})` }}></div>
         <div className="bento-card-body">
           <span className="cat-tag">{article.category}</span>
@@ -682,7 +687,7 @@ function ArticleCard({ article, idx, variant }) {
   const isWide = variant === 'editorial' && idx % 6 === 3;
 
   return (
-    <a href={articleUrl(article.id)} className={`art-card ${isFeatured ? 'is-featured' : ''} ${isWide ? 'is-wide' : ''}`}>
+    <a href={postHref(article)} className={`art-card ${isFeatured ? 'is-featured' : ''} ${isWide ? 'is-wide' : ''}`}>
       <div className="art-card-img" style={{ backgroundImage: `url(${article.image})` }}></div>
       <div className="art-card-body">
         <span className="cat-tag">{article.category}</span>
