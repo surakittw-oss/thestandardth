@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // No direct access.
 }
 
-define( 'TS_THEME_VERSION', '1.0.0' );
+define( 'TS_THEME_VERSION', '1.1.0' );
 
 /**
  * Theme supports.
