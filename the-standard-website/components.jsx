@@ -1065,4 +1065,131 @@ function Footer() {
   );
 }
 
-Object.assign(window, { Header, MegaPanel, Ticker, Hero, LatestGrid, ArticleCard, PopularSection, OpinionSection, VideoSection, ShortClipSection, EventsSection, Footer });
+// ============ ARTICLE PAGE ============
+function ArticlePage({ article, dark, setDark, activeCat, setActiveCat, related }) {
+  const a = article;
+  return (
+    <div data-screen-label="Article">
+      <Header dark={dark} setDark={setDark} activeCat={activeCat} setActiveCat={setActiveCat} variant="minimal" />
+
+      <main className="article-page">
+        {/* Breadcrumb */}
+        <div className="article-breadcrumb">
+          <div className="article-breadcrumb-inner">
+            <a href="#">หน้าแรก</a>
+            <span className="crumb-sep">/</span>
+            <a href="#">{a.category}</a>
+          </div>
+        </div>
+
+        {/* Header block */}
+        <header className="article-head">
+          <div className="article-head-inner">
+            <span className="cat-tag">{a.category}</span>
+            <h1 className="article-title">{a.title}</h1>
+            <p className="article-dek">{a.excerpt}</p>
+            <div className="article-byline">
+              <div className="article-byline-avatar">{a.author.charAt(0)}</div>
+              <div className="article-byline-info">
+                <span className="article-byline-name">{a.author}</span>
+                <span className="article-byline-meta">{a.time} · อ่าน {a.readTime}</span>
+              </div>
+              <div className="article-share">
+                <button className="article-share-btn" aria-label="Share">{Icons.arrow}</button>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Hero image */}
+        <figure className="article-hero-fig">
+          <div className="article-hero-img" style={{ backgroundImage: `url(${a.image})` }}></div>
+          <figcaption className="article-caption">ภาพประกอบข่าว: THE STANDARD</figcaption>
+        </figure>
+
+        {/* Body + sidebar */}
+        <div className="article-body-wrap">
+          <article className="article-body">
+            <p className="article-lede">{a.excerpt} เหตุการณ์ดังกล่าวเกิดขึ้นในช่วงเวลาที่หลายฝ่ายจับตาดูอย่างใกล้ชิด ท่ามกลางความเปลี่ยนแปลงทางสังคมและเศรษฐกิจที่ส่งผลกระทบต่อประชาชนในหลายภาคส่วน</p>
+
+            <p>ความคืบหน้าล่าสุดของประเด็นนี้สร้างความสนใจอย่างกว้างขวางในสังคม โดยหน่วยงานที่เกี่ยวข้องได้ออกมาชี้แจงรายละเอียดเพิ่มเติม พร้อมยืนยันว่าจะมีการติดตามสถานการณ์อย่างต่อเนื่อง เพื่อให้ประชาชนได้รับข้อมูลที่ถูกต้องและทันเวลา</p>
+
+            <blockquote className="article-pullquote">
+              <p>“เราให้ความสำคัญกับความโปร่งใสและการสื่อสารที่ชัดเจนกับสาธารณะ เพื่อให้ทุกฝ่ายมีความเข้าใจในทิศทางเดียวกัน”</p>
+            </blockquote>
+
+            <p>นักวิเคราะห์มองว่าสถานการณ์นี้อาจส่งผลต่อทิศทางนโยบายในระยะถัดไป โดยเฉพาะในมิติที่เกี่ยวข้องกับความเชื่อมั่นของประชาชนและภาคธุรกิจ ซึ่งจำเป็นต้องอาศัยความร่วมมือจากทุกภาคส่วนเพื่อหาทางออกที่เหมาะสมร่วมกัน</p>
+
+            <h3 className="article-subhead">มุมมองจากผู้เชี่ยวชาญ</h3>
+            <p>ผู้เชี่ยวชาญในแวดวงดังกล่าวให้ความเห็นว่า การเปลี่ยนแปลงเชิงโครงสร้างที่กำลังเกิดขึ้นถือเป็นก้าวสำคัญที่ควรได้รับการติดตามอย่างใกล้ชิด ทั้งในมิติของผลกระทบเชิงบวกและความท้าทายที่อาจเกิดขึ้นตามมา</p>
+
+            <p>ทั้งนี้ หน่วยงานที่เกี่ยวข้องระบุว่าจะมีการเปิดเผยรายละเอียดเพิ่มเติมในลำดับถัดไป พร้อมเปิดพื้นที่ให้ประชาชนและผู้มีส่วนได้ส่วนเสียเข้ามามีส่วนร่วมแสดงความคิดเห็น</p>
+
+            {/* Tags */}
+            <div className="article-tags">
+              <span className="article-tags-label">แท็ก</span>
+              <a href="#" className="article-tag">{a.category}</a>
+              <a href="#" className="article-tag">ข่าวล่าสุด</a>
+              <a href="#" className="article-tag">ประเทศไทย</a>
+            </div>
+
+            {/* Author card */}
+            <div className="article-author-card">
+              <div className="article-author-avatar">{a.author.charAt(0)}</div>
+              <div className="article-author-info">
+                <span className="article-author-name">{a.author}</span>
+                <span className="article-author-desc">ทีมข่าว THE STANDARD ติดตามประเด็นนี้อย่างต่อเนื่อง</span>
+              </div>
+            </div>
+          </article>
+
+          {/* Sidebar */}
+          <aside className="article-sidebar">
+            <div className="article-sidebar-head">
+              <span className="section-rule"></span>
+              <h4>ข่าวที่เกี่ยวข้อง</h4>
+            </div>
+            <div className="article-sidebar-list">
+              {related.map(r => (
+                <a href="#" key={r.id} className="article-sidebar-item">
+                  <div className="article-sidebar-thumb" style={{ backgroundImage: `url(${r.image})` }}></div>
+                  <div className="article-sidebar-body">
+                    <span className="cat-tag-sm">{r.category}</span>
+                    <h5>{r.title}</h5>
+                    <span className="meta-sub">{r.time}</span>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </aside>
+        </div>
+
+        {/* More from category */}
+        <section className="section article-more">
+          <div className="section-head">
+            <div className="section-head-left">
+              <span className="section-rule"></span>
+              <h2 className="section-title">อ่านต่อในหมวด {a.category}</h2>
+            </div>
+          </div>
+          <div className="article-more-list">
+            {related.slice(0, 4).map((r) => (
+              <a href="#" key={r.id} className="article-more-item">
+                <div className="article-more-thumb" style={{ backgroundImage: `url(${r.image})` }}></div>
+                <div className="article-more-body">
+                  <span className="cat-tag-sm">{r.category}</span>
+                  <h4>{r.title}</h4>
+                  <span className="meta-sub">{r.time}</span>
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
+      </main>
+
+      <Footer />
+    </div>
+  );
+}
+
+Object.assign(window, { Header, MegaPanel, Ticker, Hero, LatestGrid, ArticleCard, PopularSection, OpinionSection, VideoSection, ShortClipSection, EventsSection, Footer, ArticlePage });
