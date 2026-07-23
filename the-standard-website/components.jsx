@@ -1,3 +1,9 @@
+// Build the article-page URL for a given article id.
+// Uses the extensionless "clean URL" path so the query string survives
+// both the local `serve` dev server and Vercel (cleanUrls). Linking to
+// "article.html?id=..." triggers a 301 that drops the query on `serve`.
+const articleUrl = (id) => `article?id=${encodeURIComponent(id)}`;
+
 // ============ SVG ICONS ============
 const Icons = {
   sun: (
@@ -290,7 +296,7 @@ function Header({ dark, setDark, activeCat, setActiveCat, variant }) {
           <div className="masthead-meta left">
             <span className="date-label">{today}</span>
           </div>
-          <a href="#" className="wordmark" aria-label="THE STANDARD">
+          <a href="index.html" className="wordmark" aria-label="THE STANDARD">
             <img src="assets/logo-the-standard.png" alt="THE STANDARD" className="wordmark-img" />
           </a>
           <div className="masthead-meta right">
@@ -438,7 +444,7 @@ function MegaPanel({ cat, onEnter, onLeave, onPick }) {
           <span className="mega-featured-head">เรื่องเด่น</span>
           <div className={`mega-feature-list ${isNews ? 'is-row' : ''}`}>
             {featured.map(a => (
-              <a href="#" key={a.id} className="mega-feature-card">
+              <a href={articleUrl(a.id)} key={a.id} className="mega-feature-card">
                 <div className="mega-feature-img" style={{ backgroundImage: `url(${a.image})` }}></div>
                 <div className="mega-feature-body">
                   <span className="cat-tag-sm">{a.category}</span>
@@ -488,7 +494,7 @@ function Hero({ articles, variant }) {
   if (variant === 'bento') {
     return (
       <section className="hero hero-bento">
-        <a href="#" className="bento-cell bento-hero">
+        <a href={articleUrl(main.id)} className="bento-cell bento-hero">
           <div className="bento-hero-img" style={{ backgroundImage: `url(${main.image})` }}></div>
           <div className="bento-hero-overlay">
             <span className="cat-tag light">{main.category}</span>
@@ -502,7 +508,7 @@ function Hero({ articles, variant }) {
           </div>
         </a>
         {sides.map((a, i) => (
-          <a href="#" key={a.id} className={`bento-cell bento-side bento-side-${i}`}>
+          <a href={articleUrl(a.id)} key={a.id} className={`bento-cell bento-side bento-side-${i}`}>
             <div className="bento-side-img" style={{ backgroundImage: `url(${a.image})` }}></div>
             <div className="bento-side-body">
               <span className="cat-tag">{a.category}</span>
@@ -534,7 +540,7 @@ function Hero({ articles, variant }) {
         </article>
         <div className="hero-side-mag">
           {sides.map(a => (
-            <a href="#" className="hero-side-card-mag" key={a.id}>
+            <a href={articleUrl(a.id)} className="hero-side-card-mag" key={a.id}>
               <div className="hero-side-thumb" style={{ backgroundImage: `url(${a.image})` }}></div>
               <div className="hero-side-body">
                 <span className="cat-tag">{a.category}</span>
@@ -552,7 +558,7 @@ function Hero({ articles, variant }) {
     const grid6 = articles.slice(1, 7);
     return (
       <section className="hero hero-minimal">
-        <a href="#" className="hero-minimal-feature">
+        <a href={articleUrl(main.id)} className="hero-minimal-feature">
           <div className="hero-minimal-feature-img" style={{ backgroundImage: `url(${main.image})` }}></div>
           <div className="hero-minimal-feature-body">
             <span className="cat-tag">{main.category}</span>
@@ -569,7 +575,7 @@ function Hero({ articles, variant }) {
         </a>
         <div className="hero-minimal-grid">
           {grid6.map(a => (
-            <a href="#" key={a.id} className="hero-minimal-card">
+            <a href={articleUrl(a.id)} key={a.id} className="hero-minimal-card">
               <div className="hero-minimal-card-img" style={{ backgroundImage: `url(${a.image})` }}></div>
               <div className="hero-minimal-card-body">
                 <span className="cat-tag-sm">{a.category}</span>
@@ -587,7 +593,7 @@ function Hero({ articles, variant }) {
   return (
     <section className="hero hero-editorial">
       <article className="hero-main">
-        <a href="#" className="hero-main-link">
+        <a href={articleUrl(main.id)} className="hero-main-link">
           <div className="hero-main-img" style={{ backgroundImage: `url(${main.image})` }}></div>
           <div className="hero-main-body">
             <span className="cat-tag">{main.category}</span>
@@ -605,7 +611,7 @@ function Hero({ articles, variant }) {
       </article>
       <aside className="hero-side">
         {sides.map((a, i) => (
-          <a href="#" className="hero-side-card" key={a.id}>
+          <a href={articleUrl(a.id)} className="hero-side-card" key={a.id}>
             {i === 0 && (
               <div className="hero-side-thumb-lg" style={{ backgroundImage: `url(${a.image})` }}></div>
             )}
@@ -659,7 +665,7 @@ function ArticleCard({ article, idx, variant }) {
   if (variant === 'bento') {
     // Sized via parent grid; image-first card with overlay
     return (
-      <a href="#" className="bento-card">
+      <a href={articleUrl(article.id)} className="bento-card">
         <div className="bento-card-img" style={{ backgroundImage: `url(${article.image})` }}></div>
         <div className="bento-card-body">
           <span className="cat-tag">{article.category}</span>
@@ -676,7 +682,7 @@ function ArticleCard({ article, idx, variant }) {
   const isWide = variant === 'editorial' && idx % 6 === 3;
 
   return (
-    <a href="#" className={`art-card ${isFeatured ? 'is-featured' : ''} ${isWide ? 'is-wide' : ''}`}>
+    <a href={articleUrl(article.id)} className={`art-card ${isFeatured ? 'is-featured' : ''} ${isWide ? 'is-wide' : ''}`}>
       <div className="art-card-img" style={{ backgroundImage: `url(${article.image})` }}></div>
       <div className="art-card-body">
         <span className="cat-tag">{article.category}</span>
@@ -708,7 +714,7 @@ function PopularSection() {
             <h2 className="popular-big-title">บทความ<br/>ยอดนิยม</h2>
             <p className="popular-big-sub">อัปเดตทุก 15 นาที</p>
           </div>
-          <a href="#" className="popular-feature-card">
+          <a href={articleUrl(top.articleId || top.id)} className="popular-feature-card">
             <div className="popular-feature-img" style={{ backgroundImage: `url(${top.image})` }}>
               <span className="popular-feature-rank">#{top.rank}</span>
             </div>
@@ -728,7 +734,7 @@ function PopularSection() {
         <div className="popular-right">
           {items.map((item, i) => (
             <a
-              href="#"
+              href={articleUrl(item.articleId || item.id)}
               key={item.id}
               className={`popular-row ${i === active ? 'is-active' : ''}`}
               onMouseEnter={() => setActive(i)}
@@ -1076,9 +1082,9 @@ function ArticlePage({ article, dark, setDark, activeCat, setActiveCat, related 
         {/* Breadcrumb */}
         <div className="article-breadcrumb">
           <div className="article-breadcrumb-inner">
-            <a href="#">หน้าแรก</a>
+            <a href="index.html">หน้าแรก</a>
             <span className="crumb-sep">/</span>
-            <a href="#">{a.category}</a>
+            <a href="index.html">{a.category}</a>
           </div>
         </div>
 
@@ -1151,7 +1157,7 @@ function ArticlePage({ article, dark, setDark, activeCat, setActiveCat, related 
             </div>
             <div className="article-sidebar-list">
               {related.map(r => (
-                <a href="#" key={r.id} className="article-sidebar-item">
+                <a href={articleUrl(r.id)} key={r.id} className="article-sidebar-item">
                   <div className="article-sidebar-thumb" style={{ backgroundImage: `url(${r.image})` }}></div>
                   <div className="article-sidebar-body">
                     <span className="cat-tag-sm">{r.category}</span>
@@ -1174,7 +1180,7 @@ function ArticlePage({ article, dark, setDark, activeCat, setActiveCat, related 
           </div>
           <div className="article-more-list">
             {related.slice(0, 4).map((r) => (
-              <a href="#" key={r.id} className="article-more-item">
+              <a href={articleUrl(r.id)} key={r.id} className="article-more-item">
                 <div className="article-more-thumb" style={{ backgroundImage: `url(${r.image})` }}></div>
                 <div className="article-more-body">
                   <span className="cat-tag-sm">{r.category}</span>
