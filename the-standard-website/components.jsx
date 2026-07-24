@@ -1079,6 +1079,31 @@ function Footer() {
 // ============ ARTICLE PAGE ============
 function ArticlePage({ article, dark, setDark, activeCat, setActiveCat, related }) {
   const a = article;
+  const contentRef = React.useRef(null);
+
+  // Real WordPress post content can carry inline <script> tags (e.g. a
+  // plugin-injected "AI summary" box with a typewriter effect). Browsers
+  // never execute <script> elements inserted via innerHTML/
+  // dangerouslySetInnerHTML — so without this, such widgets render inert
+  // (and any <noscript> fallback markup inside them can show up as raw,
+  // unstyled text). Re-create and swap in each script so it actually runs.
+  React.useEffect(() => {
+    const root = contentRef.current;
+    if (!root) return;
+    // <noscript> fallbacks are meant only for when JS is disabled. This app
+    // is, by definition, running JS — but content inserted via
+    // dangerouslySetInnerHTML can let a <noscript> block's raw fallback text
+    // leak into the visible page (browsers don't reliably hide it the way
+    // they do for markup parsed normally during page load). Drop it.
+    root.querySelectorAll('noscript').forEach(el => el.remove());
+    Array.from(root.querySelectorAll('script')).forEach(oldScript => {
+      const newScript = document.createElement('script');
+      Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+      newScript.textContent = oldScript.textContent;
+      oldScript.parentNode.replaceChild(newScript, oldScript);
+    });
+  }, [a.content]);
+
   return (
     <div data-screen-label="Article">
       <Header dark={dark} setDark={setDark} activeCat={activeCat} setActiveCat={setActiveCat} variant="minimal" />
@@ -1125,7 +1150,7 @@ function ArticlePage({ article, dark, setDark, activeCat, setActiveCat, related 
           <article className="article-body">
             {a.content ? (
               /* Real WordPress post content */
-              <div className="article-content" dangerouslySetInnerHTML={{ __html: a.content }} />
+              <div className="article-content" ref={contentRef} dangerouslySetInnerHTML={{ __html: a.content }} />
             ) : (
               /* Static prototype filler (used when no real post content is supplied) */
               <React.Fragment>
