@@ -2,17 +2,14 @@
 /**
  * Homepage React app mount.
  *
+ * Renders only what WordPress can supply: the hero and the latest-posts grid,
+ * both driven by window.ARTICLES (real posts, emitted by ts_the_runtime_scripts).
+ *
  * @package the-standard
  */
 ?>
 <div id="root"></div>
 <?php ts_the_runtime_scripts(); ?>
-<script>
-	// Prefer live WordPress posts (window.TS_POSTS) over the static data.js set.
-	if (Array.isArray(window.TS_POSTS) && window.TS_POSTS.length) {
-		window.ARTICLES = window.TS_POSTS;
-	}
-</script>
 <script type="text/babel">
 function App() {
 	const [dark, setDark] = React.useState(false);
@@ -36,12 +33,7 @@ function App() {
 		localStorage.setItem('ts-prefs-v2', JSON.stringify({ variant, dark }));
 	}, [dark]);
 
-	const filteredArticles = React.useMemo(() => {
-		if (activeCat === 'ALL') return window.ARTICLES;
-		return window.ARTICLES.filter(a => a.category === activeCat);
-	}, [activeCat]);
-
-	const heroPool = filteredArticles.length >= 4 ? filteredArticles : window.ARTICLES;
+	const articles = window.ARTICLES || [];
 
 	return (
 		<div data-screen-label="Homepage">
@@ -53,13 +45,8 @@ function App() {
 				variant={variant}
 			/>
 			<main>
-				<Hero articles={heroPool} variant={variant} />
-				<OpinionSection />
-				<PopularSection />
-				<LatestGrid articles={filteredArticles} activeCat={activeCat} variant={variant} />
-				<VideoSection />
-				<ShortClipSection />
-				<EventsSection />
+				<Hero articles={articles} variant={variant} />
+				<LatestGrid articles={articles} activeCat={'ALL'} variant={variant} />
 			</main>
 			<Footer />
 		</div>

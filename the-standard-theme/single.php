@@ -33,21 +33,26 @@ while ( have_posts() ) :
 
 	$thumb = get_the_post_thumbnail_url( null, 'large' );
 
+	$author_id     = (int) get_the_author_meta( 'ID' );
+	$author_avatar = get_avatar_url( $author_id, array( 'size' => 96 ) );
+
 	$ts_article = array(
-		'id'          => get_the_ID(),
-		'category'    => $cat ? $cat->name : '',
-		'categoryUrl' => $cat ? get_category_link( $cat->term_id ) : home_url( '/' ),
-		'homeUrl'     => home_url( '/' ),
-		'title'       => get_the_title(),
-		'excerpt'     => wp_strip_all_tags( get_the_excerpt() ),
-		'content'     => $content,
-		'image'       => $thumb ? $thumb : '',
-		'author'      => get_the_author(),
-		'authorBio'   => get_the_author_meta( 'description' ),
-		'time'        => get_the_date(),
-		'readTime'    => $minutes . ' ' . __( 'นาที', 'the-standard' ),
-		'tags'        => $tags,
-		'tagUrls'     => $tag_urls,
+		'id'           => get_the_ID(),
+		'url'          => get_permalink(),
+		'category'     => $cat ? $cat->name : '',
+		'categoryUrl'  => $cat ? get_category_link( $cat->term_id ) : home_url( '/' ),
+		'homeUrl'      => home_url( '/' ),
+		'title'        => get_the_title(),
+		'excerpt'      => ts_clean_excerpt( get_the_ID() ),
+		'content'      => $content,
+		'image'        => $thumb ? $thumb : '',
+		'author'       => get_the_author(),
+		'authorAvatar' => $author_avatar ? $author_avatar : '',
+		'authorBio'    => get_the_author_meta( 'description' ),
+		'time'         => get_the_date(),
+		'readTime'     => $minutes . ' ' . __( 'นาที', 'the-standard' ),
+		'tags'         => $tags,
+		'tagUrls'      => $tag_urls,
 	);
 
 	// Related posts from the same category.
@@ -61,20 +66,9 @@ while ( have_posts() ) :
 				'no_found_rows'       => true,
 			)
 		);
-		while ( $rq->have_posts() ) :
-			$rq->the_post();
-			$rcats  = get_the_category();
-			$rthumb = get_the_post_thumbnail_url( null, 'medium' );
-			$ts_related[] = array(
-				'id'       => get_the_ID(),
-				'url'      => get_permalink(),
-				'category' => ! empty( $rcats ) ? $rcats[0]->name : '',
-				'title'    => get_the_title(),
-				'image'    => $rthumb ? $rthumb : '',
-				'time'     => get_the_date(),
-			);
-		endwhile;
-		wp_reset_postdata();
+		foreach ( $rq->posts as $rp ) {
+			$ts_related[] = ts_post_card( $rp );
+		}
 	}
 
 endwhile;

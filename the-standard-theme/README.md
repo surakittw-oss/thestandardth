@@ -1,78 +1,96 @@
 # THE STANDARD — WordPress Theme
 
-A WordPress packaging of THE STANDARD homepage & article-page redesign prototype.
+THE STANDARD homepage & article redesign, packaged as a WordPress theme.
 
 ## What this is
 
-A **static** build: the page content ships in `assets/js/data.js` and is rendered
-client-side with **React** (loaded from a CDN) + **Babel Standalone**. WordPress
-supplies the shell — `<head>`, enqueued fonts/CSS, and the theme/article URLs.
-It does **not** yet read posts from the WordPress database.
+**WordPress owns the data.** Posts, categories and tags are queried in PHP and
+handed to React components (loaded from a CDN + Babel Standalone) as JSON. The
+theme bundles **no demo content** — everything you see is what's in the database.
 
-Includes two screens:
+Screens:
 
-- **Homepage** — Hero, Opinion, Popular, Latest, Video, Shorts, Events
-- **Article page** — full article layout with related-news sidebar
+| Template | Renders |
+|---|---|
+| `front-page.php` / `index.php` | Homepage — hero + latest posts |
+| `single.php` | Article — full post content, byline, share, related posts |
+| `category.php` | Category archive |
+| `tag.php` | Tag archive |
+| `archive.php` | Date / author / other archives |
+| `search.php` | Search results |
+| `page-article.php` | Optional "Article" Page template (see below) |
 
 ## File structure
 
 ```
 the-standard-theme/
 ├── style.css                     # Theme header (metadata only)
-├── functions.php                 # Setup, asset enqueue, runtime <script> helper
-├── header.php                    # <head> + <body> open (wp_head)
-├── footer.php                    # scroll-reveal + wp_footer
-├── front-page.php                # Front page  → homepage
-├── index.php                     # Fallback    → homepage
-├── single.php                    # Single post → article page
-├── page-article.php              # Page template "THE STANDARD — Article"
+├── functions.php                 # Setup, assets, and all WP → JSON data helpers
+├── header.php / footer.php       # wp_head / wp_footer + scroll-reveal
+├── front-page.php, index.php     # Homepage
+├── single.php                    # Article
+├── category.php, tag.php,        # Archives
+│   archive.php, search.php
+├── page-article.php              # Page template: "THE STANDARD — Article"
 ├── template-parts/
 │   ├── home-app.php              # Homepage React mount
-│   └── article-app.php           # Article React mount (reads ?id=)
+│   ├── article-app.php           # Article React mount
+│   └── archive-app.php           # Archive React mount
 └── assets/
     ├── css/main.css              # Full stylesheet
-    ├── js/data.js                # All content (ARTICLES, POPULAR, VIDEOS, …)
-    ├── js/components.jsx          # React components (Header, Hero, ArticlePage, …)
-    └── images/                    # logo, event poster
+    ├── js/components.jsx         # React components
+    └── images/                    # logo
 ```
+
+### Data helpers (functions.php)
+
+| Function | Purpose |
+|---|---|
+| `ts_post_card( $post )` | One post in the shape the components expect (id, url, category, title, excerpt, image, time, author, readTime) |
+| `ts_recent_posts( $limit )` | Recent posts → `window.ARTICLES` (per-request cached) |
+| `ts_nav_bootstrap()` | Nav + mega menu + category list from real categories |
+| `ts_the_archive_data()` | Current archive → `window.TS_ARCHIVE*` |
+| `ts_clean_excerpt()` | Excerpt from **raw** content, so plugin-injected boxes and HTML entities don't leak in |
+| `ts_post_image_url()` | Featured image, else first inline `<img>` |
+| `ts_read_time()` | Estimated minutes from raw content |
 
 ## Install
 
-1. Zip the `the-standard-theme` folder (the zip's top-level folder must be
-   `the-standard-theme` containing `style.css`).
-2. WP admin → **Appearance → Themes → Add New → Upload Theme** → choose the zip → **Activate**.
-   (Or copy the folder into `wp-content/themes/` directly.)
+1. Zip the `the-standard-theme` folder (top-level folder must be
+   `the-standard-theme`, containing `style.css`).
+2. **Appearance → Themes → Add New → Upload Theme** → Activate.
+   (Or copy the folder into `wp-content/themes/`.)
+3. **Settings → Permalinks** — pick anything other than "Plain" so category and
+   tag archives get pretty URLs.
 
-## Two one-time setup steps
+That's it. The nav is generated from your categories; posts appear as you publish.
 
-The homepage renders on the site root automatically. To make the article links work:
+### Optional: the "Article" Page template
 
-1. **Create the article Page.** Pages → Add New → title e.g. `Article`,
-   set the **slug to `article`**, and under *Page Attributes → Template* choose
-   **“THE STANDARD — Article”**. Publish.
-   Homepage cards link to `<article-page>?id=<article-id>`; the theme detects
-   this page automatically (`ts_article_base()` in `functions.php`).
-2. **(Optional) Pretty permalinks.** Settings → Permalinks → pick any option
-   other than “Plain” so the `?id=` query is preserved on the article page.
+`page-article.php` exists for the standalone-prototype flow, where cards link to
+`<article-page>?id=<id>`. With real WordPress posts, cards link straight to their
+permalinks and `single.php` renders them — so **this page is no longer needed**.
+Create it only if you want that URL to work: add a Page with the slug `article`
+and assign the "THE STANDARD — Article" template.
 
-> The article page also renders for any normal post via `single.php`
-> (it falls back to the first article when no `?id=` is given).
+## Editing
 
-## Editing content
+- **Layout / components** — `assets/js/components.jsx`
+- **Styles** — `assets/css/main.css`
+- **Data shape** — the `ts_*` helpers in `functions.php`
 
-All copy, images and links live in **`assets/js/data.js`** — edit the
-`window.ARTICLES`, `POPULAR`, `VIDEOS`, `SHORT_CLIPS`, `EVENTS`, `OPINIONS`
-arrays. Layout/components are in `assets/js/components.jsx`; styles in
-`assets/css/main.css`. After editing, bump `TS_THEME_VERSION` in
-`functions.php` to bust caches.
+Bump `TS_THEME_VERSION` in `functions.php` after editing JS or CSS, or browsers
+will serve the cached copy.
 
 ## Notes / limitations
 
-- **Babel-in-browser** compiles JSX on each page load — great for a prototype,
-  not ideal for production traffic. For a production rollout, precompile
-  `components.jsx` and the inline apps to plain JS and drop the Babel CDN.
-- **Static content.** To drive the theme from real WordPress posts, replace the
-  `window.ARTICLES` lookup in `template-parts/*.php` with data emitted from the
-  WP loop (e.g. `wp_localize_script`) — the components already accept a plain
-  article object shape: `{ id, category, title, excerpt, image, time, author, readTime }`.
-- Requires a network connection at runtime (React/Babel load from unpkg.com).
+- **Babel in the browser** compiles the JSX on each page load — fine for a
+  prototype, not ideal for production traffic. To go live, precompile
+  `components.jsx` (and the inline `text/babel` apps) to plain JS and drop the
+  Babel CDN.
+- **Requires a network connection** at runtime: React and Babel load from unpkg.com.
+- **No `page.php`** — regular Pages currently fall through to `index.php` and
+  render the homepage. Add a `page.php` if the site needs static pages.
+- `components.jsx` still contains components the theme doesn't render (Popular,
+  Opinion, Video, Shorts, Events) because it is shared with the standalone
+  prototype. They ship as unused code but never appear on the site.

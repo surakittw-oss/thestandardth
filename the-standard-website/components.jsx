@@ -9,6 +9,23 @@ const articleUrl = (id) => `article?id=${encodeURIComponent(id)}`;
 // article-page URL for the standalone prototype.
 const postHref = (a) => (a && a.url) || articleUrl(a && a.id);
 
+// Nav / mega-menu topics come in two shapes: a plain string (standalone
+// prototype, where picking one filters the homepage client-side) or a
+// { label, url } object (WordPress, where each topic is a real archive URL).
+const topicOf = (t) => (typeof t === 'string' ? { label: t, url: '' } : { label: (t && t.label) || '', url: (t && t.url) || '' });
+
+// Does a nav URL point at the page we're already on? Used to highlight the
+// active nav item (home_url() is a prefix of every URL, so compare paths).
+const isCurrentPath = (url) => {
+  if (!url || typeof window === 'undefined') return false;
+  try {
+    const strip = (p) => p.replace(/\/+$/, '') || '/';
+    return strip(new URL(url, window.location.href).pathname) === strip(window.location.pathname);
+  } catch (e) {
+    return false;
+  }
+};
+
 // ============ SVG ICONS ============
 const Icons = {
   sun: (
@@ -78,6 +95,32 @@ const Icons = {
     <svg width="14" height="10" viewBox="0 0 14 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <line x1="0" y1="5" x2="12" y2="5"/>
       <polyline points="8,1 12,5 8,9"/>
+    </svg>
+  ),
+  facebook: (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M13.5 21v-8h2.7l.4-3h-3.1V8.2c0-.87.24-1.46 1.5-1.46h1.65V4.06c-.29-.04-1.28-.12-2.43-.12-2.4 0-4.04 1.47-4.04 4.16V10H7.46v3h2.72v8h3.32z"/>
+    </svg>
+  ),
+  xTwitter: (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M18.9 2.5H22l-6.77 7.73L23 21.5h-6.4l-4.6-6.06-5.4 6.06H3.5l7.06-8.03L2.2 2.5h6.53l4.3 5.72L18.9 2.5zm-1.1 17.03h1.72L7.33 4.36H5.5l12.3 15.17z"/>
+    </svg>
+  ),
+  line: (
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M12 3C6.9 3 2.75 6.32 2.75 10.41c0 3.67 2.95 6.74 6.93 7.33.27.06.64.18.73.41.08.21.05.54.03.76l-.12.72c-.04.21-.17.83.73.45 1.1-.46 5.9-3.47 8.06-5.95 1.35-1.48 1.99-3 1.99-4.21C21.1 6.32 17.1 3 12 3zM8.12 12.98H6.5a.43.43 0 0 1-.43-.43V9.2a.43.43 0 0 1 .86 0v2.92h1.19a.43.43 0 0 1 0 .86zm1.72-.43a.43.43 0 0 1-.86 0V9.2a.43.43 0 0 1 .86 0v3.35zm4.02 0a.43.43 0 0 1-.3.41.4.4 0 0 1-.13.02.42.42 0 0 1-.34-.17l-1.72-2.33v2.07a.43.43 0 0 1-.86 0V9.2a.43.43 0 0 1 .3-.41.43.43 0 0 1 .47.17l1.72 2.34V9.2a.43.43 0 0 1 .86 0v3.35zm2.72-2.11a.43.43 0 0 1 0 .86h-1.19v.82h1.19a.43.43 0 0 1 0 .86H14.9a.43.43 0 0 1-.43-.43V9.2a.43.43 0 0 1 .43-.43h1.68a.43.43 0 0 1 0 .86h-1.19v.81h1.19z"/>
+    </svg>
+  ),
+  link: (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+    </svg>
+  ),
+  check: (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <polyline points="20 6 9 17 4 12"/>
     </svg>
   ),
 };
@@ -325,7 +368,17 @@ function Header({ dark, setDark, activeCat, setActiveCat, variant }) {
           <div className="nav-cats">
             {window.NAV_ITEMS.map((item, i) => {
               const hasMega = !!item.mega;
-              const isActive = i === 0; // HOME default
+              // With real URLs (WordPress) highlight whatever page we're on;
+              // in the standalone prototype nothing navigates, so HOME leads.
+              const isActive = item.url ? isCurrentPath(item.url) : i === 0;
+              const navClass = `nav-cat ${isActive ? 'is-active' : ''} ${megaCat === item.mega && hasMega ? 'is-hovered' : ''}`;
+              const pick = () => {
+                if (item.cat) setActiveCat(item.cat);
+                setMenuOpen(false);
+                if (!isDesktop() && hasMega) {
+                  setMobileExpanded(m => (m === item.mega ? null : item.mega));
+                }
+              };
               return (
                 <div
                   key={item.label}
@@ -333,27 +386,51 @@ function Header({ dark, setDark, activeCat, setActiveCat, variant }) {
                   onMouseEnter={() => isDesktop() && (hasMega ? openMega(item.mega) : setMegaCat(null))}
                   onMouseLeave={() => isDesktop() && scheduleClose()}
                 >
-                  <button
-                    onClick={() => {
-                      if (item.cat) setActiveCat(item.cat);
-                      setMenuOpen(false);
-                      if (!isDesktop() && hasMega) {
-                        setMobileExpanded(m => (m === item.mega ? null : item.mega));
-                      }
-                    }}
-                    className={`nav-cat ${isActive ? 'is-active' : ''} ${megaCat === item.mega && hasMega ? 'is-hovered' : ''}`}
-                    aria-haspopup={hasMega ? 'true' : undefined}
-                    aria-expanded={megaCat === item.mega ? 'true' : undefined}
-                  >
-                    {item.label}
-                  </button>
+                  {item.url ? (
+                    // Real destination (home / category archive) so the nav works
+                    // from any page — article, archive, not just the homepage.
+                    <a
+                      href={item.url}
+                      className={navClass}
+                      aria-haspopup={hasMega ? 'true' : undefined}
+                      aria-expanded={megaCat === item.mega ? 'true' : undefined}
+                      onClick={(e) => {
+                        // On mobile, a item with a submenu expands it first
+                        // instead of navigating away immediately.
+                        if (!isDesktop() && hasMega) {
+                          e.preventDefault();
+                          pick();
+                        } else {
+                          setMenuOpen(false);
+                        }
+                      }}
+                    >
+                      {item.label}
+                    </a>
+                  ) : (
+                    <button
+                      onClick={pick}
+                      className={navClass}
+                      aria-haspopup={hasMega ? 'true' : undefined}
+                      aria-expanded={megaCat === item.mega ? 'true' : undefined}
+                    >
+                      {item.label}
+                    </button>
+                  )}
                   {hasMega && mobileExpanded === item.mega && (
                     <div className="mega-mobile">
-                      {(window.MEGA_MENU[item.mega]?.topics || window.CATEGORIES.filter(c=>c!=='ALL')).map(t => (
-                        <a href="#" key={t} className="mega-mobile-link"
-                          onClick={() => { setActiveCat(t); setMobileExpanded(null); setMenuOpen(false); }}
-                        >{t}</a>
-                      ))}
+                      {(window.MEGA_MENU[item.mega]?.topics || window.CATEGORIES.filter(c=>c!=='ALL')).map(t => {
+                        const tp = topicOf(t);
+                        return (
+                          <a href={tp.url || '#'} key={tp.label} className="mega-mobile-link"
+                            onClick={(e) => {
+                              if (!tp.url) { e.preventDefault(); setActiveCat(tp.label); }
+                              setMobileExpanded(null);
+                              setMenuOpen(false);
+                            }}
+                          >{tp.label}</a>
+                        );
+                      })}
                     </div>
                   )}
                 </div>
@@ -380,8 +457,10 @@ function Header({ dark, setDark, activeCat, setActiveCat, variant }) {
 function MegaPanel({ cat, onEnter, onLeave, onPick }) {
   const meta = window.MEGA_MENU[cat] || { label: cat, color: '#E6332A', topics: [] };
   const accent = meta.color || '#E6332A';
-  const isNews = cat === 'NEWS';
-  const isVisual = (cat === 'POP' || cat === 'LIFE' || cat === 'WEALTH'); // visual card layout
+  // meta.layout lets the data pick the panel style ('news' | 'visual' | 'list').
+  // Without it we fall back to the prototype's hard-coded category names.
+  const isNews = meta.layout ? meta.layout === 'news' : cat === 'NEWS';
+  const isVisual = meta.layout ? meta.layout === 'visual' : (cat === 'POP' || cat === 'LIFE' || cat === 'WEALTH');
   const featured = React.useMemo(
     () => isNews
       ? window.ARTICLES.slice(0, 2)
@@ -400,9 +479,13 @@ function MegaPanel({ cat, onEnter, onLeave, onPick }) {
       <div className="mega-topbar">
         <div className="mega-topbar-inner">
           <span className="mega-topbar-label">{meta.label}</span>
-          <button className="mega-topbar-all" onClick={() => onPick(cat)}>
-            ดูทั้งหมด →
-          </button>
+          {meta.url ? (
+            <a className="mega-topbar-all" href={meta.url}>ดูทั้งหมด →</a>
+          ) : (
+            <button className="mega-topbar-all" onClick={() => onPick(cat)}>
+              ดูทั้งหมด →
+            </button>
+          )}
         </div>
       </div>
 
@@ -412,31 +495,43 @@ function MegaPanel({ cat, onEnter, onLeave, onPick }) {
           {isVisual ? (
             // POP / LIFE / WEALTH: visual card grid
             <div className={`mega-visual-grid${cat === 'WEALTH' ? ' mega-visual-grid--3col' : ''}`}>
-              {meta.topics.map((t, i) => (
-                <a href="#" key={t} className="mega-visual-card" onClick={() => onPick(t)}>
-                  <span className="mega-visual-icon">
-                    {MEGA_ICONS[t] || <span className="mega-visual-idx">{String(i+1).padStart(2,'0')}</span>}
-                  </span>
-                  <span className="mega-visual-name">{t}</span>
-                </a>
-              ))}
+              {meta.topics.map((t, i) => {
+                const tp = topicOf(t);
+                return (
+                  <a href={tp.url || '#'} key={tp.label} className="mega-visual-card"
+                    onClick={(e) => { if (!tp.url) { e.preventDefault(); onPick(tp.label); } }}>
+                    <span className="mega-visual-icon">
+                      {MEGA_ICONS[tp.label] || <span className="mega-visual-idx">{String(i+1).padStart(2,'0')}</span>}
+                    </span>
+                    <span className="mega-visual-name">{tp.label}</span>
+                  </a>
+                );
+              })}
             </div>
           ) : isNews ? (
             // NEWS: two-column topic list
             <div className="mega-news-grid">
-              {meta.topics.map((t) => (
-                <a href="#" key={t} className="mega-news-topic" onClick={() => onPick(t)}>
-                  <span className="mega-news-bullet"></span>
-                  {t}
-                </a>
-              ))}
+              {meta.topics.map((t) => {
+                const tp = topicOf(t);
+                return (
+                  <a href={tp.url || '#'} key={tp.label} className="mega-news-topic"
+                    onClick={(e) => { if (!tp.url) { e.preventDefault(); onPick(tp.label); } }}>
+                    <span className="mega-news-bullet"></span>
+                    {tp.label}
+                  </a>
+                );
+              })}
             </div>
           ) : (
             // Other: simple list
             <div className="mega-topic-list">
-              {meta.topics.map(t => (
-                <a href="#" key={t} className="mega-topic" onClick={() => onPick(t)}>{t}</a>
-              ))}
+              {meta.topics.map(t => {
+                const tp = topicOf(t);
+                return (
+                  <a href={tp.url || '#'} key={tp.label} className="mega-topic"
+                    onClick={(e) => { if (!tp.url) { e.preventDefault(); onPick(tp.label); } }}>{tp.label}</a>
+                );
+              })}
             </div>
           )}
         </div>
@@ -1026,6 +1121,12 @@ function ShortClipSection() {
 
 // ============ FOOTER ============
 function Footer() {
+  // When the nav carries real category URLs (WordPress) the link columns are
+  // built from them, so the footer never advertises sections the site lacks.
+  // The standalone prototype has no URLs and keeps its illustrative lists.
+  const catLinks = (window.NAV_ITEMS || []).filter(i => i.url && i.cat);
+  const half = Math.ceil(catLinks.length / 2);
+
   return (
     <footer className="site-footer">
       <div className="footer-inner">
@@ -1036,22 +1137,43 @@ function Footer() {
           <p className="footer-tag">สำนักข่าวที่มุ่งสร้างความเปลี่ยนแปลงเชิงบวกแก่สังคม</p>
         </div>
         <div className="footer-cols">
-          <div>
-            <h5>NEWS</h5>
-            <a href="#">Politics</a>
-            <a href="#">Business</a>
-            <a href="#">Thailand</a>
-            <a href="#">World</a>
-            <a href="#">Tech</a>
-          </div>
-          <div>
-            <h5>VERTICALS</h5>
-            <a href="#">Wealth</a>
-            <a href="#">POP</a>
-            <a href="#">Life</a>
-            <a href="#">The Secret Sauce</a>
-            <a href="#">Opinion</a>
-          </div>
+          {catLinks.length ? (
+            <React.Fragment>
+              <div>
+                <h5>หมวดหมู่</h5>
+                {catLinks.slice(0, half).map(c => (
+                  <a href={c.url} key={c.label}>{c.label}</a>
+                ))}
+              </div>
+              {catLinks.length > half && (
+                <div>
+                  <h5>เพิ่มเติม</h5>
+                  {catLinks.slice(half).map(c => (
+                    <a href={c.url} key={c.label}>{c.label}</a>
+                  ))}
+                </div>
+              )}
+            </React.Fragment>
+          ) : (
+            <React.Fragment>
+              <div>
+                <h5>NEWS</h5>
+                <a href="#">Politics</a>
+                <a href="#">Business</a>
+                <a href="#">Thailand</a>
+                <a href="#">World</a>
+                <a href="#">Tech</a>
+              </div>
+              <div>
+                <h5>VERTICALS</h5>
+                <a href="#">Wealth</a>
+                <a href="#">POP</a>
+                <a href="#">Life</a>
+                <a href="#">The Secret Sauce</a>
+                <a href="#">Opinion</a>
+              </div>
+            </React.Fragment>
+          )}
           <div>
             <h5>COMPANY</h5>
             <a href="#">About</a>
@@ -1104,6 +1226,39 @@ function ArticlePage({ article, dark, setDark, activeCat, setActiveCat, related 
     });
   }, [a.content]);
 
+  // ── Share ──
+  // Prefer the canonical permalink supplied by PHP; on the standalone
+  // prototype (no permalink) the current URL is the thing to share.
+  const shareUrl = a.url || (typeof window !== 'undefined' ? window.location.href : '');
+  const shareText = a.title || '';
+  const enc = encodeURIComponent;
+  const [copied, setCopied] = React.useState(false);
+  const [avatarOk, setAvatarOk] = React.useState(true);
+
+  const copyLink = async () => {
+    try {
+      // navigator.clipboard needs a secure context — true on localhost but not
+      // on a plain-http custom domain (e.g. *.local), hence the textarea fallback.
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(shareUrl);
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = shareUrl;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        ta.remove();
+      }
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    } catch (e) {
+      /* clipboard blocked — leave the button state untouched */
+    }
+  };
+
   return (
     <div data-screen-label="Article">
       <Header dark={dark} setDark={setDark} activeCat={activeCat} setActiveCat={setActiveCat} variant="minimal" />
@@ -1123,15 +1278,58 @@ function ArticlePage({ article, dark, setDark, activeCat, setActiveCat, related 
           <div className="article-head-inner">
             <span className="cat-tag">{a.category}</span>
             <h1 className="article-title">{a.title}</h1>
-            {a.excerpt ? <p className="article-dek">{a.excerpt}</p> : null}
+
+            {/* Byline: avatar · author · date · share */}
             <div className="article-byline">
-              <div className="article-byline-avatar">{(a.author || '?').charAt(0)}</div>
+              <div className={`article-byline-avatar${a.authorAvatar && avatarOk ? ' has-img' : ''}`}>
+                {a.authorAvatar && avatarOk
+                  ? <img src={a.authorAvatar} alt={a.author} onError={() => setAvatarOk(false)} />
+                  : (a.author || '?').charAt(0)}
+              </div>
               <div className="article-byline-info">
                 <span className="article-byline-name">{a.author}</span>
-                <span className="article-byline-meta">{a.time}{a.readTime ? ` · อ่าน ${a.readTime}` : ''}</span>
+                <span className="article-byline-meta">{a.time}</span>
               </div>
+
               <div className="article-share">
-                <button className="article-share-btn" aria-label="Share">{Icons.arrow}</button>
+                <a
+                  className="article-share-btn"
+                  data-net="facebook"
+                  href={`https://www.facebook.com/sharer/sharer.php?u=${enc(shareUrl)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="แชร์บน Facebook"
+                  title="แชร์บน Facebook"
+                >{Icons.facebook}</a>
+
+                <a
+                  className="article-share-btn"
+                  data-net="x"
+                  href={`https://twitter.com/intent/tweet?url=${enc(shareUrl)}&text=${enc(shareText)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="แชร์บน X"
+                  title="แชร์บน X"
+                >{Icons.xTwitter}</a>
+
+                <a
+                  className="article-share-btn"
+                  data-net="line"
+                  href={`https://social-plugins.line.me/lineit/share?url=${enc(shareUrl)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="แชร์บน LINE"
+                  title="แชร์บน LINE"
+                >{Icons.line}</a>
+
+                <button
+                  type="button"
+                  className={`article-share-btn${copied ? ' is-copied' : ''}`}
+                  data-net="copy"
+                  onClick={copyLink}
+                  aria-label={copied ? 'คัดลอกลิงก์แล้ว' : 'คัดลอกลิงก์'}
+                  title={copied ? 'คัดลอกลิงก์แล้ว' : 'คัดลอกลิงก์'}
+                >{copied ? Icons.check : Icons.link}</button>
               </div>
             </div>
           </div>
@@ -1238,4 +1436,100 @@ function ArticlePage({ article, dark, setDark, activeCat, setActiveCat, related 
   );
 }
 
-Object.assign(window, { Header, MegaPanel, Ticker, Hero, LatestGrid, ArticleCard, PopularSection, OpinionSection, VideoSection, ShortClipSection, EventsSection, Footer, ArticlePage });
+// ============ ARCHIVE PAGE (category / tag) ============
+function ArchivePage({ archive, posts, pagination, dark, setDark, activeCat, setActiveCat }) {
+  const list = posts || [];
+  const pg = pagination || {};
+  const featured = list[0];
+  const rest = featured ? list.slice(1) : [];
+
+  return (
+    <div data-screen-label="Archive">
+      <Header dark={dark} setDark={setDark} activeCat={activeCat} setActiveCat={setActiveCat} variant="minimal" />
+
+      <main className="archive-page">
+        {/* Breadcrumb */}
+        <div className="article-breadcrumb">
+          <div className="article-breadcrumb-inner">
+            <a href={archive.homeUrl || 'index.html'}>หน้าแรก</a>
+            <span className="crumb-sep">/</span>
+            <span>{archive.kindLabel}</span>
+          </div>
+        </div>
+
+        {/* Archive header */}
+        <header className="archive-head">
+          <div className="archive-head-inner">
+            <span className="archive-eyebrow">{archive.kindLabel}</span>
+            <h1 className="archive-title">{archive.title}</h1>
+            {archive.description ? <p className="archive-desc">{archive.description}</p> : null}
+            <span className="archive-count">{archive.count} บทความ</span>
+          </div>
+        </header>
+
+        <div className="archive-body">
+          {list.length === 0 ? (
+            <div className="empty-state">
+              <p>ยังไม่มีบทความใน{archive.kindLabel}นี้</p>
+            </div>
+          ) : (
+            <React.Fragment>
+              {/* Lead story — only on the first page, so page 2+ reads as a plain grid */}
+              {featured && !pg.isPaged && (
+                <a href={postHref(featured)} className="archive-lead">
+                  <div className="archive-lead-img" style={{ backgroundImage: `url(${featured.image})` }}></div>
+                  <div className="archive-lead-body">
+                    <span className="cat-tag">{featured.category}</span>
+                    <h2 className="archive-lead-title">{featured.title}</h2>
+                    {featured.excerpt ? <p className="archive-lead-excerpt">{featured.excerpt}</p> : null}
+                    <div className="meta-line">
+                      <span>{featured.author}</span>
+                      <span className="dot">·</span>
+                      <span>{featured.time}</span>
+                    </div>
+                  </div>
+                </a>
+              )}
+
+              <div className="archive-grid">
+                {(pg.isPaged ? list : rest).map(p => (
+                  <a href={postHref(p)} key={p.id} className="art-card">
+                    <div className="art-card-img" style={{ backgroundImage: `url(${p.image})` }}></div>
+                    <div className="art-card-body">
+                      <span className="cat-tag">{p.category}</span>
+                      <h3 className="art-card-title">{p.title}</h3>
+                      <div className="art-card-meta">
+                        <span>{p.author}</span>
+                        <span className="dot">·</span>
+                        <span>{p.time}</span>
+                      </div>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </React.Fragment>
+          )}
+
+          {/* Pagination */}
+          {(pg.prev || pg.next) && (
+            <nav className="archive-pagination">
+              {pg.prev
+                ? <a className="archive-page-btn" href={pg.prev}>← ใหม่กว่า</a>
+                : <span className="archive-page-btn is-disabled">← ใหม่กว่า</span>}
+              {pg.total > 1 && (
+                <span className="archive-page-info">หน้า {pg.current} / {pg.total}</span>
+              )}
+              {pg.next
+                ? <a className="archive-page-btn" href={pg.next}>เก่ากว่า →</a>
+                : <span className="archive-page-btn is-disabled">เก่ากว่า →</span>}
+            </nav>
+          )}
+        </div>
+      </main>
+
+      <Footer />
+    </div>
+  );
+}
+
+Object.assign(window, { Header, MegaPanel, Ticker, Hero, LatestGrid, ArticleCard, PopularSection, OpinionSection, VideoSection, ShortClipSection, EventsSection, Footer, ArticlePage, ArchivePage });
