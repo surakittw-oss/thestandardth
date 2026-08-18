@@ -12,7 +12,7 @@ Screens:
 
 | Template | Renders |
 |---|---|
-| `front-page.php` / `index.php` | Homepage — hero + latest posts |
+| `front-page.php` / `index.php` | Homepage — hero (sticky posts) + per-category section blocks |
 | `single.php` | Article — full post content, byline, share, related posts |
 | `category.php` | Category archive |
 | `tag.php` | Tag archive |
@@ -32,6 +32,7 @@ the-standard-theme/
 ├── category.php, tag.php,        # Archives
 │   archive.php, search.php
 ├── page-article.php              # Page template: "THE STANDARD — Article"
+├── inc/homepage-settings.php     # Appearance → Homepage settings screen
 ├── template-parts/
 │   ├── home-app.php              # Homepage React mount
 │   ├── article-app.php           # Article React mount
@@ -48,11 +49,45 @@ the-standard-theme/
 |---|---|
 | `ts_post_card( $post )` | One post in the shape the components expect (id, url, category, title, excerpt, image, time, author, readTime) |
 | `ts_recent_posts( $limit )` | Recent posts → `window.ARTICLES` (per-request cached) |
-| `ts_nav_bootstrap()` | Nav + mega menu + category list from real categories |
+| `ts_featured_posts( $limit )` | Hero posts — sticky first, then recent → `window.TS_FEATURED` |
+| `ts_home_sections()` | Homepage blocks per category/tag → `window.TS_HOME_SECTIONS` |
+| `ts_nav_bootstrap()` | Nav + mega menu — from the "primary" menu, else auto from categories |
 | `ts_the_archive_data()` | Current archive → `window.TS_ARCHIVE*` |
 | `ts_clean_excerpt()` | Excerpt from **raw** content, so plugin-injected boxes and HTML entities don't leak in |
 | `ts_post_image_url()` | Featured image, else first inline `<img>` |
 | `ts_read_time()` | Estimated minutes from raw content |
+
+## Editor controls (no code, no plugins)
+
+### Nav bar — Appearance → Menus, location **Primary Menu**
+Drag to reorder; drag an item under another to nest it (nested items become that
+item's mega-menu panel). Add Categories, Pages or Custom Links. With no menu
+assigned, the nav is auto-built from HOME + the top-level categories.
+
+Per top-level item, the **Description** field accepts options:
+
+```
+color:#1877F2; layout:visual
+```
+
+`color` sets the mega panel's accent; `layout` is `list` (default), `news` or `visual`.
+
+### Homepage — Appearance → Homepage
+
+A settings screen (`inc/homepage-settings.php`, option `ts_home_settings`):
+
+| Group | Controls |
+|---|---|
+| **โพสต์เด่น** (hero) | how many posts; whether sticky posts lead |
+| **บล็อกเนื้อหา** (sections) | add/remove rows, **drag to reorder**, pick a category *or* tag per row, override the heading, set posts per block |
+| **ข่าวล่าสุด** (latest) | on/off, heading, count — skips anything already in the hero |
+
+Choosing the hero's lead story is WordPress' own **"Stick this post to the front
+page"** (post editor → Publish → Visibility → Edit). Sticky posts lead in the
+order they were stuck; recent posts top the hero up so it's never short.
+
+With nothing configured, the homepage falls back to the four busiest top-level
+categories plus the latest block, so a fresh install still looks complete.
 
 ## Install
 

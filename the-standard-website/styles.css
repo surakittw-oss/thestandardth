@@ -591,7 +591,17 @@ h1, h2, h3, h4, h5 { margin: 0; font-weight: 700; letter-spacing: -0.01em; }
   padding: 4px 0;
   border-bottom: 3px solid var(--brand);
   margin-bottom: 12px;
+  text-decoration: none;
 }
+/* Article header: one pill per category (posts can carry more than one) */
+.article-cat-tags {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.article-cat-tags .cat-tag { transition: opacity 0.15s; }
+.article-cat-tags .cat-tag:hover { opacity: 0.72; }
 .cat-tag.light { color: #fff; border-bottom-color: #fff; }
 .cat-tag-sm {
   font-family: var(--sans);

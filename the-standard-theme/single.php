@@ -17,8 +17,15 @@ $ts_related = array();
 while ( have_posts() ) :
 	the_post();
 
-	$cats    = get_the_category();
-	$cat     = ! empty( $cats ) ? $cats[0] : null;
+	$cats       = get_the_category();
+	$cat        = ! empty( $cats ) ? $cats[0] : null;
+	$categories = array();
+	foreach ( $cats as $c ) {
+		$categories[] = array(
+			'name' => $c->name,
+			'url'  => get_category_link( $c->term_id ),
+		);
+	}
 	$content = apply_filters( 'the_content', get_the_content() );
 	$minutes = max( 1, (int) ceil( mb_strlen( wp_strip_all_tags( $content ) ) / 400 ) );
 
@@ -41,6 +48,7 @@ while ( have_posts() ) :
 		'url'          => get_permalink(),
 		'category'     => $cat ? $cat->name : '',
 		'categoryUrl'  => $cat ? get_category_link( $cat->term_id ) : home_url( '/' ),
+		'categories'   => $categories,
 		'homeUrl'      => home_url( '/' ),
 		'title'        => get_the_title(),
 		'excerpt'      => ts_clean_excerpt( get_the_ID() ),

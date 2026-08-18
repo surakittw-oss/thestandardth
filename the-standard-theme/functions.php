@@ -13,7 +13,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // No direct access.
 }
 
-define( 'TS_THEME_VERSION', '2.1.0' );
+define( 'TS_THEME_VERSION', '2.5.0' );
+
+// Appearance → Homepage settings screen.
+require_once get_template_directory() . '/inc/homepage-settings.php';
 
 /**
  * Theme supports.
@@ -237,17 +240,357 @@ function ts_recent_posts( $limit = 24 ) {
 }
 
 /**
- * Navigation built from the site's real categories.
+ * Posts for the homepage hero.
  *
- * HOME plus each top-level category (linking to its archive). A category with
- * children gets a mega panel listing them; the components fall back to a plain
- * link when it has none.
+ * Count comes from Appearance → Homepage. When "sticky first" is enabled there,
+ * posts stuck to the front page lead (in the order they were stuck) and recent
+ * posts fill the remaining slots, so the hero is never short.
+ *
+ * @param int|null $limit Override the configured hero size.
+ * @return array
+ */
+function ts_featured_posts( $limit = null ) {
+	$settings = ts_home_settings();
+	$limit    = $limit ? (int) $limit : (int) $settings['hero_count'];
+	$limit    = max( 1, $limit );
+
+	static $cache = array();
+	if ( isset( $cache[ $limit ] ) ) {
+		return $cache[ $limit ];
+	}
+
+	$ids    = array();
+	$sticky = empty( $settings['hero_use_sticky'] )
+		? array()
+		: array_filter( array_map( 'intval', (array) get_option( 'sticky_posts' ) ) );
+
+	if ( $sticky ) {
+		$q = new WP_Query(
+			array(
+				'post_type'           => 'post',
+				'post_status'         => 'publish',
+				'post__in'            => $sticky,
+				'orderby'             => 'post__in',
+				'posts_per_page'      => $limit,
+				'ignore_sticky_posts' => true,
+				'no_found_rows'       => true,
+			)
+		);
+		foreach ( $q->posts as $p ) {
+			$ids[] = (int) $p->ID;
+		}
+	}
+
+	if ( count( $ids ) < $limit ) {
+		$fill = new WP_Query(
+			array(
+				'post_type'           => 'post',
+				'post_status'         => 'publish',
+				'post__not_in'        => $ids,
+				'posts_per_page'      => $limit - count( $ids ),
+				'ignore_sticky_posts' => true,
+				'no_found_rows'       => true,
+			)
+		);
+		foreach ( $fill->posts as $p ) {
+			$ids[] = (int) $p->ID;
+		}
+	}
+
+	$out = array();
+	foreach ( $ids as $id ) {
+		$out[] = ts_post_card( $id );
+	}
+
+	$cache[ $limit ] = $out;
+	return $out;
+}
+
+/**
+ * Homepage content blocks, one per category / tag.
+ *
+ * Configured in Appearance → Homepage (drag to reorder, set the heading and how
+ * many posts each block shows). With nothing configured it falls back to the
+ * four busiest top-level categories, so a fresh install still looks complete.
+ *
+ * Blocks whose term no longer exists or has no published posts are skipped.
+ *
+ * @return array
+ */
+function ts_home_sections() {
+	static $cache = null;
+	if ( null !== $cache ) {
+		return $cache;
+	}
+
+	$specs    = array();
+	$settings = ts_home_settings();
+
+	foreach ( $settings['sections'] as $row ) {
+		if ( empty( $row['term'] ) || false === strpos( $row['term'], ':' ) ) {
+			continue;
+		}
+		list( $tax, $term_id ) = explode( ':', $row['term'], 2 );
+		$term                  = get_term( (int) $term_id, $tax );
+		if ( ! $term || is_wp_error( $term ) ) {
+			continue;
+		}
+		$link = get_term_link( $term );
+
+		$specs[] = array(
+			'label'    => '' !== $row['label'] ? $row['label'] : $term->name,
+			'url'      => is_wp_error( $link ) ? '' : $link,
+			'sub'      => '',
+			'count'    => max( 1, (int) $row['count'] ),
+			'taxonomy' => $tax,
+			'term_id'  => (int) $term_id,
+		);
+	}
+
+	if ( ! $specs ) {
+		$cats = get_categories(
+			array(
+				'parent'     => 0,
+				'hide_empty' => true,
+				'orderby'    => 'count',
+				'order'      => 'DESC',
+				'number'     => 4,
+			)
+		);
+		foreach ( $cats as $cat ) {
+			$specs[] = array(
+				'label'    => $cat->name,
+				'url'      => get_category_link( $cat->term_id ),
+				'sub'      => '',
+				'count'    => 6,
+				'taxonomy' => 'category',
+				'term_id'  => (int) $cat->term_id,
+			);
+		}
+	}
+
+	$sections = array();
+	foreach ( $specs as $spec ) {
+		if ( ! $spec['taxonomy'] || ! $spec['term_id'] ) {
+			continue;
+		}
+
+		$q = new WP_Query(
+			array(
+				'post_type'           => 'post',
+				'post_status'         => 'publish',
+				'posts_per_page'      => $spec['count'],
+				'ignore_sticky_posts' => true,
+				'no_found_rows'       => true,
+				'tax_query'           => array(
+					array(
+						'taxonomy' => $spec['taxonomy'],
+						'field'    => 'term_id',
+						'terms'    => array( $spec['term_id'] ),
+					),
+				),
+			)
+		);
+		if ( ! $q->posts ) {
+			continue;
+		}
+
+		$posts = array();
+		foreach ( $q->posts as $p ) {
+			$posts[] = ts_post_card( $p );
+		}
+
+		$sections[] = array(
+			'label' => $spec['label'],
+			'url'   => $spec['url'],
+			'sub'   => $spec['sub'],
+			'posts' => $posts,
+		);
+	}
+
+	$cache = $sections;
+	return $cache;
+}
+
+/**
+ * The optional "latest posts" block at the foot of the homepage.
+ *
+ * Skips anything already shown in the hero so the block doesn't repeat it.
+ *
+ * @return array|null Null when disabled or empty.
+ */
+function ts_home_latest() {
+	$settings = ts_home_settings();
+	if ( empty( $settings['show_latest'] ) ) {
+		return null;
+	}
+
+	$hero_ids = array_map( 'intval', wp_list_pluck( ts_featured_posts(), 'id' ) );
+
+	$q = new WP_Query(
+		array(
+			'post_type'           => 'post',
+			'post_status'         => 'publish',
+			'post__not_in'        => $hero_ids,
+			'posts_per_page'      => (int) $settings['latest_count'],
+			'ignore_sticky_posts' => true,
+			'no_found_rows'       => true,
+		)
+	);
+	if ( ! $q->posts ) {
+		return null;
+	}
+
+	$posts = array();
+	foreach ( $q->posts as $p ) {
+		$posts[] = ts_post_card( $p );
+	}
+
+	return array(
+		'label' => '' !== $settings['latest_label'] ? $settings['latest_label'] : __( 'ข่าวล่าสุด', 'the-standard' ),
+		'posts' => $posts,
+	);
+}
+
+/**
+ * Emit the homepage payload (hero + section blocks + latest) for the React app.
+ */
+function ts_the_home_data() {
+	?>
+	<script>
+		window.TS_FEATURED      = <?php echo wp_json_encode( ts_featured_posts() ); ?>;
+		window.TS_HOME_SECTIONS = <?php echo wp_json_encode( ts_home_sections() ); ?>;
+		window.TS_HOME_LATEST   = <?php echo wp_json_encode( ts_home_latest() ); ?>;
+	</script>
+	<?php
+}
+
+/**
+ * Parse "key:value; key2:value2" out of a nav menu item's Description field.
+ * Lets an editor set a mega-panel accent color / layout per top-level item
+ * without touching code — e.g. description "color:#1877F2; layout:visual".
+ *
+ * @param string $description Menu item description.
+ * @return array
+ */
+function ts_parse_menu_item_opts( $description ) {
+	$opts = array();
+	if ( ! $description ) {
+		return $opts;
+	}
+	foreach ( explode( ';', $description ) as $pair ) {
+		$pair = trim( $pair );
+		if ( false === strpos( $pair, ':' ) ) {
+			continue;
+		}
+		list( $key, $val ) = array_map( 'trim', explode( ':', $pair, 2 ) );
+		if ( $key ) {
+			$opts[ $key ] = $val;
+		}
+	}
+	return $opts;
+}
+
+/**
+ * Build the nav from a WordPress menu, if one is assigned to the "primary"
+ * location (Appearance → Menus). This is what makes the bar drag-to-reorder:
+ * item order, nesting (→ mega-menu submenu) and labels all come from there.
+ *
+ * @return array{nav:array,mega:array,categories:array}|null Null when no menu is assigned.
+ */
+function ts_nav_from_menu() {
+	$locations = get_nav_menu_locations();
+	if ( empty( $locations['primary'] ) ) {
+		return null;
+	}
+
+	$menu = wp_get_nav_menu_object( $locations['primary'] );
+	$items = $menu ? wp_get_nav_menu_items( $menu->term_id ) : false;
+	if ( ! $items ) {
+		return null;
+	}
+
+	// Group by parent so drag-to-nest (Appearance → Menus) becomes the mega submenu.
+	$children_of = array();
+	foreach ( $items as $item ) {
+		$children_of[ (int) $item->menu_item_parent ][] = $item;
+	}
+
+	$nav        = array();
+	$mega       = array();
+	$cat_labels = array( 'ALL' );
+
+	foreach ( ( $children_of[0] ?? array() ) as $item ) {
+		$label = $item->title;
+		$url   = $item->url;
+		$opts  = ts_parse_menu_item_opts( $item->description );
+
+		$topics = array();
+		foreach ( ( $children_of[ (int) $item->ID ] ?? array() ) as $kid ) {
+			$topics[] = array( 'label' => $kid->title, 'url' => $kid->url );
+		}
+
+		if ( $topics ) {
+			$mega[ $label ] = array(
+				'label'  => $label,
+				'color'  => isset( $opts['color'] ) ? $opts['color'] : '#E6332A',
+				'url'    => $url,
+				'layout' => isset( $opts['layout'] ) ? $opts['layout'] : 'list',
+				'topics' => $topics,
+			);
+		}
+
+		$cat_labels[] = $label;
+		$nav[]        = array(
+			'label' => $label,
+			'url'   => $url,
+			'cat'   => $label,
+			'mega'  => $topics ? $label : null,
+		);
+	}
+
+	// Prepend Home unless the editor already added their own link to it.
+	$home_url = home_url( '/' );
+	$has_home = ! empty( $nav ) && untrailingslashit( $nav[0]['url'] ) === untrailingslashit( $home_url );
+	if ( ! $has_home ) {
+		array_unshift(
+			$nav,
+			array(
+				'label' => __( 'HOME', 'the-standard' ),
+				'url'   => $home_url,
+				'cat'   => null,
+				'mega'  => null,
+			)
+		);
+	}
+
+	return array(
+		'nav'        => $nav,
+		'mega'       => $mega,
+		'categories' => $cat_labels,
+	);
+}
+
+/**
+ * Navigation for the header.
+ *
+ * Prefers a WordPress menu assigned to the "primary" location (Appearance →
+ * Menus — drag to reorder, drag to nest for a mega submenu, add Pages/
+ * Categories/custom links freely). Falls back to auto-building HOME + each
+ * top-level category when no menu is assigned, so the theme still works with
+ * zero setup.
  *
  * @return array{nav:array,mega:array,categories:array}
  */
 function ts_nav_bootstrap() {
 	static $cache = null;
 	if ( null !== $cache ) {
+		return $cache;
+	}
+
+	$from_menu = ts_nav_from_menu();
+	if ( $from_menu ) {
+		$cache = $from_menu;
 		return $cache;
 	}
 

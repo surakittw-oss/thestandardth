@@ -1267,16 +1267,24 @@ function ArticlePage({ article, dark, setDark, activeCat, setActiveCat, related 
         {/* Breadcrumb */}
         <div className="article-breadcrumb">
           <div className="article-breadcrumb-inner">
-            <a href={a.homeUrl || 'index.html'}>หน้าแรก</a>
-            <span className="crumb-sep">/</span>
-            <a href={a.categoryUrl || a.homeUrl || 'index.html'}>{a.category}</a>
+            <a href={a.homeUrl || 'index.html'}>Home</a>
+            {(a.categories && a.categories.length ? a.categories : a.category ? [{ name: a.category, url: a.categoryUrl }] : []).map((c, i) => (
+              <React.Fragment key={c.name}>
+                <span className="crumb-sep">/</span>
+                <a href={c.url || a.homeUrl || 'index.html'}>{c.name}</a>
+              </React.Fragment>
+            ))}
           </div>
         </div>
 
         {/* Header block */}
         <header className="article-head">
           <div className="article-head-inner">
-            <span className="cat-tag">{a.category}</span>
+            <div className="article-cat-tags">
+              {(a.categories && a.categories.length ? a.categories : a.category ? [{ name: a.category, url: a.categoryUrl }] : []).map(c => (
+                <a href={c.url || '#'} key={c.name} className="cat-tag">{c.name}</a>
+              ))}
+            </div>
             <h1 className="article-title">{a.title}</h1>
 
             {/* Byline: avatar · author · date · share */}
@@ -1532,4 +1540,30 @@ function ArchivePage({ archive, posts, pagination, dark, setDark, activeCat, set
   );
 }
 
-Object.assign(window, { Header, MegaPanel, Ticker, Hero, LatestGrid, ArticleCard, PopularSection, OpinionSection, VideoSection, ShortClipSection, EventsSection, Footer, ArticlePage, ArchivePage });
+// ============ CATEGORY SECTION (homepage blocks) ============
+// One homepage block per category/tag — the .section wrapper carries the rule
+// that visually separates it from the block above.
+function CategorySection({ title, url, sub, posts }) {
+  if (!posts || posts.length === 0) return null;
+
+  return (
+    <section className="section">
+      <div className="section-head">
+        <div className="section-head-left">
+          <span className="section-rule"></span>
+          <h2 className="section-title">{title}</h2>
+          {sub ? <span className="section-sub">{sub}</span> : null}
+        </div>
+        {url ? <a href={url} className="section-link">ดูทั้งหมด →</a> : null}
+      </div>
+
+      <div className="archive-grid">
+        {posts.map((p, i) => (
+          <ArticleCard key={p.id} article={p} idx={i} variant="minimal" />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+Object.assign(window, { Header, MegaPanel, Ticker, Hero, LatestGrid, ArticleCard, CategorySection, PopularSection, OpinionSection, VideoSection, ShortClipSection, EventsSection, Footer, ArticlePage, ArchivePage });
