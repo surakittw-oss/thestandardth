@@ -4,7 +4,7 @@
     {
       "name": "the-standard",
       "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "8080", "--directory", "/Users/surakitt.w/Documents/the-standard-website"],
+      "runtimeArgs": ["-m", "http.server", "8080", "--directory", "/Users/surakitt.w/Documents/GitHub/thestandardth/the-standard-website"],
       "port": 8080
     }
   ]

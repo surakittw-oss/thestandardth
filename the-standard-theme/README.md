@@ -12,7 +12,7 @@ Screens:
 
 | Template | Renders |
 |---|---|
-| `front-page.php` / `index.php` | Homepage — hero (sticky posts) + per-category section blocks |
+| `front-page.php` / `index.php` | Homepage — hero (chosen posts) + per-category section blocks |
 | `single.php` | Article — full post content, byline, share, related posts |
 | `category.php` | Category archive |
 | `tag.php` | Tag archive |
@@ -49,7 +49,7 @@ the-standard-theme/
 |---|---|
 | `ts_post_card( $post )` | One post in the shape the components expect (id, url, category, title, excerpt, image, time, author, readTime) |
 | `ts_recent_posts( $limit )` | Recent posts → `window.ARTICLES` (per-request cached) |
-| `ts_featured_posts( $limit )` | Hero posts — sticky first, then recent → `window.TS_FEATURED` |
+| `ts_featured_posts( $limit )` | Hero posts — the chosen list first, then recent → `window.TS_FEATURED` |
 | `ts_home_sections()` | Homepage blocks per category/tag → `window.TS_HOME_SECTIONS` |
 | `ts_nav_bootstrap()` | Nav + mega menu — from the "primary" menu, else auto from categories |
 | `ts_the_archive_data()` | Current archive → `window.TS_ARCHIVE*` |
@@ -78,16 +78,20 @@ A settings screen (`inc/homepage-settings.php`, option `ts_home_settings`):
 
 | Group | Controls |
 |---|---|
-| **โพสต์เด่น** (hero) | how many posts; whether sticky posts lead |
+| **โพสต์เด่น** (hero) | total slot count, plus an explicit post list — add/remove rows, **drag to reorder** (top row leads) |
 | **บล็อกเนื้อหา** (sections) | add/remove rows, **drag to reorder**, pick a category *or* tag per row, override the heading, set posts per block |
 | **ข่าวล่าสุด** (latest) | on/off, heading, count — skips anything already in the hero |
 
-Choosing the hero's lead story is WordPress' own **"Stick this post to the front
-page"** (post editor → Publish → Visibility → Edit). Sticky posts lead in the
-order they were stuck; recent posts top the hero up so it's never short.
+The hero list is deliberately *not* wired to WordPress' native sticky posts:
+`stick_post()` always appends to the `sticky_posts` option, so pinning a new lead
+story pushes it to the **back** of the queue — the opposite of what an editor
+expects. Picking posts here gives real control over which story leads and in what
+order. Any slots left over are filled with recent posts, so the hero is never
+short, and duplicates are dropped.
 
-With nothing configured, the homepage falls back to the four busiest top-level
-categories plus the latest block, so a fresh install still looks complete.
+With nothing configured, the homepage falls back to recent posts for the hero and
+the four busiest top-level categories for the blocks, so a fresh install still
+looks complete.
 
 ## Install
 

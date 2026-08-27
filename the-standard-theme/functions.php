@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // No direct access.
 }
 
-define( 'TS_THEME_VERSION', '2.5.0' );
+define( 'TS_THEME_VERSION', '2.6.0' );
 
 // Appearance → Homepage settings screen.
 require_once get_template_directory() . '/inc/homepage-settings.php';
@@ -242,9 +242,11 @@ function ts_recent_posts( $limit = 24 ) {
 /**
  * Posts for the homepage hero.
  *
- * Count comes from Appearance → Homepage. When "sticky first" is enabled there,
- * posts stuck to the front page lead (in the order they were stuck) and recent
- * posts fill the remaining slots, so the hero is never short.
+ * Chosen explicitly in Appearance → Homepage (drag to order — the first row
+ * leads) rather than via WordPress' native "sticky" posts: stick_post()
+ * always appends to the sticky list, so pinning a new lead story would push
+ * it to the *back* of the queue instead of the front. Recent posts fill any
+ * slots left over, so the hero is never short.
  *
  * @param int|null $limit Override the configured hero size.
  * @return array
@@ -259,27 +261,7 @@ function ts_featured_posts( $limit = null ) {
 		return $cache[ $limit ];
 	}
 
-	$ids    = array();
-	$sticky = empty( $settings['hero_use_sticky'] )
-		? array()
-		: array_filter( array_map( 'intval', (array) get_option( 'sticky_posts' ) ) );
-
-	if ( $sticky ) {
-		$q = new WP_Query(
-			array(
-				'post_type'           => 'post',
-				'post_status'         => 'publish',
-				'post__in'            => $sticky,
-				'orderby'             => 'post__in',
-				'posts_per_page'      => $limit,
-				'ignore_sticky_posts' => true,
-				'no_found_rows'       => true,
-			)
-		);
-		foreach ( $q->posts as $p ) {
-			$ids[] = (int) $p->ID;
-		}
-	}
+	$ids = array_slice( array_map( 'intval', $settings['hero_posts'] ), 0, $limit );
 
 	if ( count( $ids ) < $limit ) {
 		$fill = new WP_Query(

@@ -2,9 +2,9 @@
 /**
  * Appearance → Homepage: the theme's homepage settings screen.
  *
- * Everything the front page shows — how many hero posts, whether sticky posts
- * lead, which category/tag blocks appear and in what order — is stored in the
- * single `ts_home_settings` option and read back by ts_home_settings().
+ * Everything the front page shows — which posts lead the hero and in what
+ * order, which category/tag blocks appear — is stored in the single
+ * `ts_home_settings` option and read back by ts_home_settings().
  *
  * @package the-standard
  */
@@ -20,12 +20,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function ts_home_defaults() {
 	return array(
-		'hero_count'      => 7,
-		'hero_use_sticky' => 1,
-		'sections'        => array(),
-		'show_latest'     => 1,
-		'latest_label'    => '',
-		'latest_count'    => 9,
+		'hero_count'   => 7,
+		'hero_posts'   => array(),
+		'sections'     => array(),
+		'show_latest'  => 1,
+		'latest_label' => '',
+		'latest_count' => 9,
 	);
 }
 
@@ -59,8 +59,9 @@ add_action( 'admin_init', 'ts_register_home_settings' );
 /**
  * Validate and normalise everything coming from the form.
  *
- * Section rows are re-indexed here, so the saved order is the submitted order.
- * Rows pointing at a term that no longer exists are dropped.
+ * Row order is re-indexed here, so the order you dragged into (renumbered by
+ * JS just before submit) is the order that gets saved. Rows pointing at a
+ * post/term that no longer exists, or a duplicate post, are dropped silently.
  *
  * @param mixed $input Raw form input.
  * @return array
@@ -69,11 +70,25 @@ function ts_sanitize_home_settings( $input ) {
 	$out   = ts_home_defaults();
 	$input = is_array( $input ) ? $input : array();
 
-	$out['hero_count']      = max( 1, min( 12, isset( $input['hero_count'] ) ? (int) $input['hero_count'] : 7 ) );
-	$out['hero_use_sticky'] = empty( $input['hero_use_sticky'] ) ? 0 : 1;
-	$out['show_latest']     = empty( $input['show_latest'] ) ? 0 : 1;
-	$out['latest_label']    = isset( $input['latest_label'] ) ? sanitize_text_field( $input['latest_label'] ) : '';
-	$out['latest_count']    = max( 1, min( 30, isset( $input['latest_count'] ) ? (int) $input['latest_count'] : 9 ) );
+	$out['hero_count']   = max( 1, min( 12, isset( $input['hero_count'] ) ? (int) $input['hero_count'] : 7 ) );
+	$out['show_latest']  = empty( $input['show_latest'] ) ? 0 : 1;
+	$out['latest_label'] = isset( $input['latest_label'] ) ? sanitize_text_field( $input['latest_label'] ) : '';
+	$out['latest_count'] = max( 1, min( 30, isset( $input['latest_count'] ) ? (int) $input['latest_count'] : 9 ) );
+
+	$hero_posts = array();
+	$raw_hero   = isset( $input['hero_posts'] ) && is_array( $input['hero_posts'] ) ? $input['hero_posts'] : array();
+	foreach ( $raw_hero as $post_id ) {
+		$post_id = (int) $post_id;
+		if ( ! $post_id || in_array( $post_id, $hero_posts, true ) ) {
+			continue; // Blank row, or the same post picked twice.
+		}
+		$post = get_post( $post_id );
+		if ( ! $post || 'publish' !== $post->post_status || 'post' !== $post->post_type ) {
+			continue; // Deleted / unpublished since this screen was loaded.
+		}
+		$hero_posts[] = $post_id;
+	}
+	$out['hero_posts'] = $hero_posts;
 
 	$sections = array();
 	$rows     = isset( $input['sections'] ) && is_array( $input['sections'] ) ? $input['sections'] : array();
@@ -129,6 +144,42 @@ function ts_homepage_admin_assets( $hook ) {
 add_action( 'admin_enqueue_scripts', 'ts_homepage_admin_assets' );
 
 /**
+ * <option> list of every published post, newest first, for the hero picker.
+ *
+ * @param int $selected Post ID to preselect.
+ * @return string
+ */
+function ts_post_options( $selected = 0 ) {
+	$html = '<option value="0">' . esc_html__( '— เลือกบทความ —', 'the-standard' ) . '</option>';
+
+	$posts = get_posts(
+		array(
+			'post_type'      => 'post',
+			'post_status'    => 'publish',
+			'posts_per_page' => 300,
+			'orderby'        => 'date',
+			'order'          => 'DESC',
+		)
+	);
+
+	foreach ( $posts as $post ) {
+		$cats  = get_the_category( $post->ID );
+		$label = $post->post_title;
+		if ( ! empty( $cats ) ) {
+			$label .= ' — ' . $cats[0]->name;
+		}
+		$html .= sprintf(
+			'<option value="%d"%s>%s</option>',
+			$post->ID,
+			selected( (int) $selected, $post->ID, false ),
+			esc_html( $label )
+		);
+	}
+
+	return $html;
+}
+
+/**
  * <option> list of every category and tag, grouped, for the section picker.
  *
  * @param string $selected Value to preselect, as "taxonomy:term_id".
@@ -165,7 +216,29 @@ function ts_term_options( $selected = '' ) {
 }
 
 /**
- * One section row. Pass index "__i__" to emit the JS clone template.
+ * One "featured post" row. Pass index "__i__" to emit the JS clone template.
+ *
+ * @param string|int $index   Row index used in the field name.
+ * @param int        $post_id Selected post ID.
+ */
+function ts_render_hero_row( $index, $post_id = 0 ) {
+	?>
+	<tr class="ts-hero-row">
+		<td class="ts-drag" title="<?php esc_attr_e( 'ลากเพื่อจัดลำดับ', 'the-standard' ); ?>">⣿</td>
+		<td>
+			<select name="<?php echo esc_attr( 'ts_home_settings[hero_posts][' . $index . ']' ); ?>" class="ts-post-select">
+				<?php echo ts_post_options( $post_id ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+			</select>
+		</td>
+		<td>
+			<button type="button" class="button-link delete ts-remove-hero"><?php esc_html_e( 'ลบ', 'the-standard' ); ?></button>
+		</td>
+	</tr>
+	<?php
+}
+
+/**
+ * One "content block" row. Pass index "__i__" to emit the JS clone template.
  *
  * @param string|int $index Row index used in the field names.
  * @param array      $row   Row data.
@@ -224,29 +297,44 @@ function ts_homepage_admin_page() {
 			<h2 class="title"><?php esc_html_e( 'โพสต์เด่น (ด้านบนสุด)', 'the-standard' ); ?></h2>
 			<table class="form-table" role="presentation">
 				<tr>
-					<th scope="row"><label for="ts_hero_count"><?php esc_html_e( 'จำนวนโพสต์', 'the-standard' ); ?></label></th>
+					<th scope="row"><label for="ts_hero_count"><?php esc_html_e( 'จำนวนโพสต์ทั้งหมด', 'the-standard' ); ?></label></th>
 					<td>
 						<input type="number" min="1" max="12" id="ts_hero_count"
 							name="ts_home_settings[hero_count]" value="<?php echo esc_attr( $s['hero_count'] ); ?>" class="small-text">
 						<p class="description"><?php esc_html_e( 'ชิ้นแรกแสดงใหญ่ ที่เหลือเป็นการ์ดด้านล่าง (แนะนำ 7)', 'the-standard' ); ?></p>
 					</td>
 				</tr>
-				<tr>
-					<th scope="row"><?php esc_html_e( 'โพสต์ปักหมุด', 'the-standard' ); ?></th>
-					<td>
-						<label>
-							<input type="checkbox" name="ts_home_settings[hero_use_sticky]" value="1" <?php checked( $s['hero_use_sticky'] ); ?>>
-							<?php esc_html_e( 'ให้โพสต์ที่ปักหมุดขึ้นเป็นโพสต์เด่นก่อน', 'the-standard' ); ?>
-						</label>
-						<p class="description">
-							<?php esc_html_e( 'ปักหมุดที่หน้าแก้ไขโพสต์ → กล่องเผยแพร่ → การมองเห็น → แก้ไข → ปักหมุดไว้ที่หน้าแรก', 'the-standard' ); ?>
-							<?php if ( $sticky = get_option( 'sticky_posts' ) ) : ?>
-								<br><strong><?php echo esc_html( sprintf( __( 'ตอนนี้ปักหมุดไว้ %d โพสต์', 'the-standard' ), count( (array) $sticky ) ) ); ?></strong>
-							<?php endif; ?>
-						</p>
-					</td>
-				</tr>
 			</table>
+
+			<p class="description">
+				<?php esc_html_e( 'เลือกบทความที่ต้องการให้ขึ้นก่อนโดยตรง · ลากไอคอนซ้ายเพื่อจัดลำดับ (แถวบนสุด = ขึ้นก่อน) · ถ้าเลือกไว้น้อยกว่าจำนวนด้านบน จะเติมด้วยโพสต์ล่าสุดให้ครบอัตโนมัติ', 'the-standard' ); ?>
+			</p>
+
+			<table class="widefat striped ts-hero-table">
+				<thead>
+					<tr>
+						<th class="ts-col-drag"></th>
+						<th><?php esc_html_e( 'บทความ', 'the-standard' ); ?></th>
+						<th class="ts-col-del"></th>
+					</tr>
+				</thead>
+				<tbody id="ts-hero-rows">
+					<?php
+					if ( $s['hero_posts'] ) {
+						foreach ( $s['hero_posts'] as $i => $post_id ) {
+							ts_render_hero_row( $i, $post_id );
+						}
+					}
+					?>
+				</tbody>
+			</table>
+			<?php if ( ! $s['hero_posts'] ) : ?>
+				<p class="description ts-hero-empty">
+					<?php esc_html_e( 'ยังไม่ได้เลือก — โพสต์เด่นจะใช้โพสต์ล่าสุดทั้งหมดอัตโนมัติ', 'the-standard' ); ?>
+				</p>
+			<?php endif; ?>
+
+			<p><button type="button" class="button" id="ts-add-hero">+ <?php esc_html_e( 'เพิ่มโพสต์เด่น', 'the-standard' ); ?></button></p>
 
 			<h2 class="title"><?php esc_html_e( 'บล็อกเนื้อหา', 'the-standard' ); ?></h2>
 			<p class="description">
@@ -313,46 +401,65 @@ function ts_homepage_admin_page() {
 			<?php submit_button(); ?>
 		</form>
 
+		<script type="text/html" id="ts-hero-template">
+			<?php ts_render_hero_row( '__i__' ); ?>
+		</script>
 		<script type="text/html" id="ts-section-template">
 			<?php ts_render_section_row( '__i__' ); ?>
 		</script>
 	</div>
 
 	<style>
+		.ts-home-settings .ts-hero-table,
 		.ts-home-settings .ts-sections-table { max-width: 940px; margin-top: 10px; }
 		.ts-home-settings .ts-col-drag  { width: 34px; }
 		.ts-home-settings .ts-col-count { width: 110px; }
 		.ts-home-settings .ts-col-del   { width: 60px; }
 		.ts-home-settings .ts-drag { cursor: grab; color: #a7aaad; text-align: center; user-select: none; font-size: 15px; }
+		.ts-home-settings .ts-hero-row.ui-sortable-helper,
 		.ts-home-settings .ts-section-row.ui-sortable-helper { background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,.14); }
-		.ts-home-settings .ts-term-select { max-width: 260px; }
+		.ts-home-settings .ts-term-select,
+		.ts-home-settings .ts-post-select { max-width: 420px; width: 100%; }
 	</style>
 
 	<script>
 	jQuery(function ($) {
-		var $rows = $('#ts-section-rows');
+		// Both tables share the same pattern: sortable rows, an "add" button that
+		// clones a hidden <script type="text/html"> template, and inline removal.
+		function wireRepeater( rowsSelector, addBtnSelector, templateSelector, rowClass, removeClass, emptyNoticeSelector ) {
+			var $rows = $( rowsSelector );
+			$rows.sortable( { handle: '.ts-drag', axis: 'y', opacity: 0.85 } );
 
-		$rows.sortable({ handle: '.ts-drag', axis: 'y', opacity: 0.85 });
+			$( addBtnSelector ).on( 'click', function () {
+				var tpl = $( templateSelector ).html().replace( /__i__/g, 'n' + Date.now() + Math.floor( Math.random() * 1000 ) );
+				$rows.append( tpl );
+				$( emptyNoticeSelector ).hide();
+			} );
 
-		$('#ts-add-section').on('click', function () {
-			var tpl = $('#ts-section-template').html().replace(/__i__/g, 'n' + Date.now());
-			$rows.append(tpl);
-			$('.ts-sections-empty').hide();
-		});
+			$rows.on( 'click', '.' + removeClass, function () {
+				$( this ).closest( 'tr' ).remove();
+			} );
 
-		$rows.on('click', '.ts-remove-section', function () {
-			$(this).closest('tr').remove();
-		});
+			return $rows;
+		}
+
+		var $heroRows     = wireRepeater( '#ts-hero-rows', '#ts-add-hero', '#ts-hero-template', 'ts-hero-row', 'ts-remove-hero', '.ts-hero-empty' );
+		var $sectionRows  = wireRepeater( '#ts-section-rows', '#ts-add-section', '#ts-section-template', 'ts-section-row', 'ts-remove-section', '.ts-sections-empty' );
 
 		// PHP reads the bracket index, not DOM order — renumber on submit so the
 		// order you dragged into is the order that gets saved.
-		$('#ts-home-form').on('submit', function () {
-			$rows.children('tr').each(function (i) {
-				$(this).find('[name]').each(function () {
-					this.name = this.name.replace(/\[sections\]\[[^\]]*\]/, '[sections][' + i + ']');
-				});
-			});
-		});
+		$( '#ts-home-form' ).on( 'submit', function () {
+			$heroRows.children( 'tr' ).each( function ( i ) {
+				$( this ).find( '[name]' ).each( function () {
+					this.name = this.name.replace( /\[hero_posts\]\[[^\]]*\]/, '[hero_posts][' + i + ']' );
+				} );
+			} );
+			$sectionRows.children( 'tr' ).each( function ( i ) {
+				$( this ).find( '[name]' ).each( function () {
+					this.name = this.name.replace( /\[sections\]\[[^\]]*\]/, '[sections][' + i + ']' );
+				} );
+			} );
+		} );
 	});
 	</script>
 	<?php
